@@ -22,7 +22,7 @@
   - [x] [email=ADDRESS]文本[/email] 邮箱
   - [x] [img]图床链接[/img] 图片
   - [ ] [imagemap] 图片映射
-  - [ ] [youtube]视频 ID[/youtube] YouTube 视频
+  - [x] [youtube]视频 ID[/youtube] YouTube 视频
   - [ ] [audio]URL[/audio] 音频
   - [x] [heading]文本[/heading] 标题(v1)
   - [x] [notice]文本[/notice] 通知
@@ -51,6 +51,7 @@
 - [ ] 如果可能，添加左右同步滚动功能
 - [ ] 支持 Oauth 认证，便于profile Card 中显示 friend / mutual / not friend 和 bell mapper or not 信息
 - [ ] 重构整理BBCodePreview的代码
+- [ ] icon换用更标准的icon，如fontawesome
 
 ## Bugs to Fix
 

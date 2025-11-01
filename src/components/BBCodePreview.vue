@@ -299,6 +299,9 @@
         html = html.replace(/\[img](.*?)\[\/img]/gis, '<img src="$1" alt="Image" />')
         html = html.replace(/\[img=(.*?)](.*?)\[\/img]/gis, '<img src="$2" alt="Image" style="max-width: $1px;" />')
 
+        // Youtube
+        html = html.replace(/\[youtube](.*?)\[\/youtube]/gis, '<iframe class="u-embed-wide u-embed-wide--bbcode" src="https://www.youtube.com/embed/$1?rel=0" allowfullscreen></iframe>')
+
         // 8. osu! 特有标签
         // Heading (osu! style)
         html = html.replace(/\[heading](.*?)\[\/heading]/gis, '<h2 class="osu-heading">$1</h2>')

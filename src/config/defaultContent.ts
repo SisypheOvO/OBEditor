@@ -28,6 +28,12 @@ export const defaultContent = `[centre]
 
 查看用户资料：[profile=35628968]SisypheOvO[/profile] 的主页
 
+邮箱链接：[email=test@gmail.com]Sisy 的邮箱[/email]
+
+嵌入油管视频：
+
+[youtube]Ef6zwIR44Ww[/youtube]
+
 [heading]💬 引用与代码[/heading]
 
 [quote="peppy"]

@@ -269,9 +269,24 @@ body,
         position: relative;
     }
 
-    /* profile -> User Card */
+    /* youtube */
+    .u-embed-wide--bbcode {
+        max-width: 425px;
+    }
+    .u-embed-wide {
+        aspect-ratio: 16 / 9;
+        display: block;
+        width: 100%;
+    }
+    iframe {
+        border-width: initial;
+        border-style: none;
+        border-color: initial;
+        border-image: initial;
+    }
 }
 
+/* profile -> User Card */
 .qtip {
     box-shadow: none;
     direction: ltr;

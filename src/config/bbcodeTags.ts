@@ -257,5 +257,16 @@ export const bbcodeTags: BBCodeTag[] = [
         detail: "osu! 邮箱标签",
         hoverInfo: "**邮箱标签** - osu! 邮箱链接\n\n用法: `[email=邮箱地址]显示内容[/email]`",
         sortOrder: 6,
+    },
+    {
+        label: "YouTube",
+        tag: "youtube",
+        placeholder: "",
+        icon: "▷",
+        category: "media",
+        documentation: "**YouTube** - osu! youtube视频\n\n用于在网站上嵌入 YouTube 视频\n\n示例: `[youtube]Ef6zwIR44Ww[/youtube]`",
+        detail: "osu! YouTube 标签",
+        hoverInfo: "**YouTube 标签** - osu! youtube视频\n\n用法: `[youtube]视频ID[/youtube]`",
+        sortOrder: 6,
     }
 ]

@@ -201,6 +201,12 @@
         boxCounters = {}
         profileCardCounter = 0
 
+        // 清除所有旧的 profile 卡片 DOM 元素
+        if (typeof document !== "undefined") {
+            const oldCards = document.querySelectorAll('[id^="qtip-"]')
+            oldCards.forEach((card) => card.remove())
+        }
+
         // 0. 提取代码块内容（防止内部BBCode被解析）
         const codeBlocks: string[] = []
 
@@ -474,9 +480,18 @@
                 userCardTimeout = null
             }
 
+            allCards.forEach((card) => {
+                if (card.id !== `qtip-${qtipId}`) {
+                    ;(card as HTMLElement).style.transition = "opacity 0.1s ease"
+                    ;(card as HTMLElement).style.opacity = "0"
+                    setTimeout(() => {
+                        ;(card as HTMLElement).style.display = "none"
+                    }, 100)
+                }
+            })
+
             if (!document.getElementById(`qtip-${qtipId}`)) {
                 const userId = triggerElement.getAttribute("data-user-id")
-                const username = triggerElement.getAttribute("data-username")
                 if (!userId) return
                 const userInfo = await getUserInfo(userId)
                 console.log(userInfo)

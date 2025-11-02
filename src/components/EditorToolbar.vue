@@ -1,7 +1,7 @@
 <template>
     <div class="flex items-center gap-3 px-2 py-1.5 bg-[#2d2d2d] border-b border-[#3c3c3c] flex-wrap">
         <template v-for="(category, index) in categories" :key="category.name">
-            <div class="flex items-center gap-1 pl-3 pr-1 bg-[#363636] rounded border border-[#454545]">
+            <div class="flex items-center gap-1 pl-3 pr-1 py-1 bg-[#363636] rounded border border-[#454545]">
                 <span class="text-xs text-[#a8a8a8] mr-1.5 font-semibold hidden md:inline">{{ category.label }}</span>
                 <button v-for="tag in category.tags" :key="tag.tag" :class="buttonClass" :title="getTagTitle(tag)" @click="$emit('insert-tag', tag)">
                     <span class="flex items-center justify-center font-bold">{{ tag.icon }}</span>
@@ -25,7 +25,7 @@
         "insert-tag": [tag: BBCodeTag]
     }>()
 
-    const buttonClass = "flex items-center justify-center w-8 h-8 border-0 bg-transparent text-[#cccccc] rounded cursor-pointer transition-all duration-200 hover:bg-[#3c3c3c] hover:text-white active:bg-[#505050] active:scale-95 text-sm"
+    const buttonClass = "flex items-center justify-center w-7 h-7 border-0 bg-transparent text-[#cccccc] rounded cursor-pointer transition-all duration-200 hover:bg-[#3c3c3c] hover:text-white active:bg-[#505050] active:scale-95 text-sm"
 
     const dividerClass = "w-0.5 h-6 bg-[#4a4a4a] mx-0.5 hidden md:block rounded-full"
 

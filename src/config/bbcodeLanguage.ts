@@ -12,7 +12,7 @@ export const registerBBCodeLanguage = (monaco: typeof import("monaco-editor")) =
                 // === 开标签 ===
                 // 先匹配已知标签（无论是否带参数）
                 [/\[(centre)(?:=[^\]]+)?\]/i, "tag.open.layout"],
-                [/\[(url|img|profile|email|youtube)(?:=[^\]]+)?\]/i, "tag.open.media"],
+                [/\[(url|img|profile|email|youtube|audio)(?:=[^\]]+)?\]/i, "tag.open.media"],
                 [/\[(b|i|u|s|strike)(?:=[^\]]+)?\]/i, "tag.open.format"],
                 [/\[(color|size)(?:=[^\]]+)?\]/i, "tag.open.style"],
                 [/\[(quote|c|code|notice|heading)(?:=[^\]]+)?\]/i, "tag.open.block"],
@@ -23,7 +23,7 @@ export const registerBBCodeLanguage = (monaco: typeof import("monaco-editor")) =
 
                 // === 闭标签 ===
                 [/\[\/(centre)\]/i, "tag.close.layout"],
-                [/\[\/(url|img|profile|email|youtube)\]/i, "tag.close.media"],
+                [/\[\/(url|img|profile|email|youtube|audio)\]/i, "tag.close.media"],
                 [/\[\/(b|i|u|s|strike)\]/i, "tag.close.format"],
                 [/\[\/(color|size)\]/i, "tag.close.style"],
                 [/\[\/(quote|c|code|notice|heading)\]/i, "tag.close.block"],

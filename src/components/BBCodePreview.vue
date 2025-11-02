@@ -37,6 +37,9 @@
         content: string
     }>()
 
+    // 初始化音频播放器
+    const { initAudioPlayers } = useAudioPlayer()
+
     const refreshKey = ref(0)
     let boxCounters: Record<string, number> = {}
     const boxStates: Record<string, "open" | "closed"> = {}
@@ -192,6 +195,129 @@
         return content.replace(/^(\s*<br>\s*)+/, "").replace(/(\s*<br>\s*)+$/, "")
     }
 
+    // 辅助函数定义（必须在 parsedContent 之前）
+    const createBox = (name: string, content: string): string => {
+        content = content.replace(/^<br>/, "").replace(/<br>$/, "")
+
+        // 生成完全唯一的随机ID
+        const boxId = `box-${Math.random().toString(36).substr(2, 9)}`
+        const isOpen = boxStates[boxId] === "open"
+        const chevronIcon = isOpen ? CHEVRON_ICONS.DOWN : CHEVRON_ICONS.RIGHT
+
+        return `
+            <div class="bbcode-spoilerbox">
+                <a class="bbcode-spoilerbox__link flex flex-row items-center" onclick="window.toggleBox?.('${boxId}', this); return false;" href="#">
+                    <i class="bbcode-spoilerbox__link-icon ${isOpen ? "open" : ""}">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            ${chevronIcon}
+                        </svg>
+                    </i>
+                    ${name}
+                </a>
+                <div class="bbcode-spoilerbox__body" id="${boxId}" style="${isOpen ? "" : "display: none;"}">
+                    <div class="bbcode-spoilerbox__body-content">
+                        ${content}
+                    </div>
+                </div>
+            </div>
+        `
+    }
+
+    const parseBoxes = (text: string): string => {
+        const boxOpenRegex = /\[box=(.*?)]([\s\S]*)/i
+        const boxCloseRegex = /([\s\S]*?)\[\/box]/i
+        let match, matchNew, textNew
+
+        while ((match = boxOpenRegex.exec(text))) {
+            const boxName = match[1]
+            boxCounters[boxName] = (boxCounters[boxName] || 0) + 1
+            textNew = text.substring(0, match.index)
+
+            matchNew = boxCloseRegex.exec(match[2])
+
+            try {
+                if (!matchNew) throw new Error("Box not closed")
+
+                let boxContent = matchNew[1]
+
+                // 去除内容开头和结尾的多余 <br>
+                boxContent = boxContent.replace(/^(\s*<br>\s*)+/, "").replace(/(\s*<br>\s*)+$/, "")
+                textNew += createBox(boxName, boxContent)
+                textNew += text.substring(match.index + 6 + boxName.length + matchNew[0].length)
+
+                text = textNew
+            } catch (error) {
+                console.error("Box parsing error:", error)
+                return text
+            }
+        }
+
+        return text
+    }
+
+    const parseSpoilerBoxes = (text: string): string => {
+        const spoilerBoxOpenRegex = /\[spoilerbox]([\s\S]*)/i
+        const spoilerBoxCloseRegex = /([\s\S]*?)\[\/spoilerbox]/i
+        let match, matchNew, textNew
+
+        while ((match = spoilerBoxOpenRegex.exec(text))) {
+            textNew = text.substring(0, match.index)
+
+            matchNew = spoilerBoxCloseRegex.exec(match[1])
+
+            try {
+                if (!matchNew) throw new Error("Spoilerbox not closed")
+
+                let boxContent = matchNew[1]
+
+                // 去除内容开头和结尾的多余 <br>
+                boxContent = boxContent.replace(/^(\s*<br>\s*)+/, "").replace(/(\s*<br>\s*)+$/, "")
+                textNew += createBox("SPOILER", boxContent)
+                textNew += text.substring(match.index + 12 + matchNew[0].length)
+
+                text = textNew
+            } catch (error) {
+                console.error("Spoilerbox parsing error:", error)
+                return text
+            }
+        }
+
+        return text
+    }
+
+    const createProfileLink = (userId: string, username: string, qtipId: number): string => {
+        const userUrl = `https://osu.ppy.sh/users/${userId}`
+
+        return `
+            <a class="user-name js-usercard"
+            data-user-id="${userId}"
+            href="${userUrl}"
+            data-hasqtip="${qtipId}"
+            target="_blank"
+            rel="noopener noreferrer"
+            onmouseenter="window.showUserCard?.(${qtipId}, this)"
+            onmouseleave="window.hideUserCard?.(${qtipId})">
+                ${username}
+            </a>
+        `
+    }
+
+    const createAudioBox = (url: string) => {
+        return /*html*/ `<div class="audio-player js-audio--player" data-audio-url="${url}" data-audio-state="paused">
+            <button type="button" class="audio-player__button audio-player__button--play js-audio--play"><span class="fa-fw play-button"></span></button>
+
+            <div class="audio-player__bar audio-player__bar--progress js-audio--seek">
+                <div class="audio-player__bar-current"></div>
+            </div>
+
+            <div class="audio-player__timestamps">
+                <div class="audio-player__timestamp audio-player__timestamp--current"></div>
+                <div class="audio-player__timestamp-separator">/</div>
+                <div class="audio-player__timestamp audio-player__timestamp--total"></div>
+            </div>
+        </div>`
+    }
+
     const parsedContent = computed(() => {
         // 强制更新
         refreshKey.value
@@ -309,6 +435,11 @@
         // Youtube
         html = html.replace(/\[youtube](.*?)\[\/youtube]/gis, '<iframe class="u-embed-wide u-embed-wide--bbcode" src="https://www.youtube.com/embed/$1?rel=0" allowfullscreen></iframe>')
 
+        //audio
+        html = html.replace(/\[audio](.*?)\[\/audio]/gis, (match, content) => {
+            return createAudioBox(content)
+        })
+
         // 8. osu! 特有标签
         // Heading (osu! style)
         html = html.replace(/\[heading](.*?)\[\/heading]/gis, '<h2 class="osu-heading">$1</h2>')
@@ -340,111 +471,13 @@
         return html
     })
 
-    const parseBoxes = (text: string): string => {
-        const boxOpenRegex = /\[box=(.*?)]([\s\S]*)/i
-        const boxCloseRegex = /([\s\S]*?)\[\/box]/i
-        let match, matchNew, textNew
-
-        while ((match = boxOpenRegex.exec(text))) {
-            const boxName = match[1]
-            boxCounters[boxName] = (boxCounters[boxName] || 0) + 1
-            textNew = text.substring(0, match.index)
-
-            matchNew = boxCloseRegex.exec(match[2])
-
-            try {
-                if (!matchNew) throw new Error("Box not closed")
-
-                let boxContent = matchNew[1]
-
-                // 去除内容开头和结尾的多余 <br>
-                boxContent = boxContent.replace(/^(\s*<br>\s*)+/, "").replace(/(\s*<br>\s*)+$/, "")
-                textNew += createBox(boxName, boxContent)
-                textNew += text.substring(match.index + 6 + boxName.length + matchNew[0].length)
-
-                text = textNew
-            } catch (error) {
-                console.error("Box parsing error:", error)
-                return text
-            }
-        }
-
-        return text
-    }
-
-    const parseSpoilerBoxes = (text: string): string => {
-        const spoilerBoxOpenRegex = /\[spoilerbox]([\s\S]*)/i
-        const spoilerBoxCloseRegex = /([\s\S]*?)\[\/spoilerbox]/i
-        let match, matchNew, textNew
-
-        while ((match = spoilerBoxOpenRegex.exec(text))) {
-            textNew = text.substring(0, match.index)
-
-            matchNew = spoilerBoxCloseRegex.exec(match[1])
-
-            try {
-                if (!matchNew) throw new Error("Spoilerbox not closed")
-
-                let boxContent = matchNew[1]
-
-                // 去除内容开头和结尾的多余 <br>
-                boxContent = boxContent.replace(/^(\s*<br>\s*)+/, "").replace(/(\s*<br>\s*)+$/, "")
-                textNew += createBox("SPOILER", boxContent)
-                textNew += text.substring(match.index + 12 + matchNew[0].length)
-
-                text = textNew
-            } catch (error) {
-                console.error("Spoilerbox parsing error:", error)
-                return text
-            }
-        }
-
-        return text
-    }
-
-    const createBox = (name: string, content: string): string => {
-        content = content.replace(/^<br>/, "").replace(/<br>$/, "")
-
-        // 生成完全唯一的随机ID
-        const boxId = `box-${Math.random().toString(36).substr(2, 9)}`
-        const isOpen = boxStates[boxId] === "open"
-        const chevronIcon = isOpen ? CHEVRON_ICONS.DOWN : CHEVRON_ICONS.RIGHT
-
-        return `
-            <div class="bbcode-spoilerbox">
-                <a class="bbcode-spoilerbox__link flex flex-row items-center" onclick="window.toggleBox?.('${boxId}', this); return false;" href="#">
-                    <i class="bbcode-spoilerbox__link-icon ${isOpen ? "open" : ""}">
-                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            ${chevronIcon}
-                        </svg>
-                    </i>
-                    ${name}
-                </a>
-                <div class="bbcode-spoilerbox__body" id="${boxId}" style="${isOpen ? "" : "display: none;"}">
-                    <div class="bbcode-spoilerbox__body-content">
-                        ${content}
-                    </div>
-                </div>
-            </div>
-        `
-    }
-
-    const createProfileLink = (userId: string, username: string, qtipId: number): string => {
-        const userUrl = `https://osu.ppy.sh/users/${userId}`
-
-        return `
-            <a class="user-name js-usercard"
-            data-user-id="${userId}"
-            href="${userUrl}"
-            data-hasqtip="${qtipId}"
-            target="_blank"
-            rel="noopener noreferrer"
-            onmouseenter="window.showUserCard?.(${qtipId}, this)"
-            onmouseleave="window.hideUserCard?.(${qtipId})">
-                ${username}
-            </a>
-        `
-    }
+    // 监听内容变化，重新初始化音频播放器
+    watch(parsedContent, () => {
+        // 使用 nextTick 确保 DOM 已更新
+        setTimeout(() => {
+            initAudioPlayers()
+        }, 0)
+    })
 
     const getUserInfo = async (userId: string) => {
         try {

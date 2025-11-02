@@ -30,6 +30,10 @@ export const defaultContent = `[centre]
 
 邮箱链接：[email=test@gmail.com]Sisy 的邮箱[/email]
 
+嵌入音频：
+
+[audio]https://raw.githubusercontent.com/ZnCookie/osu-profile/refs/heads/main/music.opus[/audio]
+
 嵌入油管视频：
 
 [youtube]Ef6zwIR44Ww[/youtube]

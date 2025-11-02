@@ -23,7 +23,7 @@
   - [x] [img]图床链接[/img] 图片
   - [ ] [imagemap] 图片映射
   - [x] [youtube]视频 ID[/youtube] YouTube 视频
-  - [ ] [audio]URL[/audio] 音频
+  - [x] [audio]URL[/audio] 音频
   - [x] [heading]文本[/heading] 标题(v1)
   - [x] [notice]文本[/notice] 通知
 
@@ -52,6 +52,7 @@
 - [ ] 支持 Oauth 认证，便于profile Card 中显示 friend / mutual / not friend 和 bell mapper or not 信息
 - [ ] 重构整理BBCodePreview的代码
 - [ ] icon换用更标准的icon，如fontawesome
+- [ ] 简化EditorToolbar逻辑
 
 ## Bugs to Fix
 

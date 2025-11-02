@@ -68,7 +68,7 @@
         insertSpaces: true,
         formatOnPaste: true,
         formatOnType: true,
-        linkedEditing: true, // 启用链接编辑功能
+        linkedEditing: true,
     }))
 
     // 监听内容变化

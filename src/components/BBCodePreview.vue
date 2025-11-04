@@ -1,5 +1,5 @@
 <template>
-    <div class="bbcode_preview h-full flex flex-col gap-1 bg-[#2e3038] p-1 pb-0">
+    <div class="bbcode_preview h-[calc(100%-4px)] flex flex-col gap-1 bg-[#2e3038] p-1 pb-0">
         <BBCodeHeader @refresh="forceUpdate" />
         <BBCodeContent :parsed-content="parsedContent" />
     </div>

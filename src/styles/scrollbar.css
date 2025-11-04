@@ -2,6 +2,10 @@
  * 自定义滚动条样式
  */
 
+.custom-scrollbar {
+    scrollbar-gutter: stable;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
     width: 8px;
 }

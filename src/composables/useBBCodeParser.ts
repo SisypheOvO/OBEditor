@@ -217,6 +217,75 @@ export const useBBCodeParser = ({ content, boxStates, boxCounters, resetBoxes, r
     }
 
     /**
+     * 解析 [list]...[/list] 和 [list=TYPE]...[/list] 标签（支持嵌套）
+     */
+    const parseLists = (text: string): string => {
+        // 先处理有序列表 [list=TYPE]
+        const orderedListOpenRegex = /\[list=([^\]]+)]([\s\S]*)/i
+        const orderedListCloseRegex = /([\s\S]*?)\[\/list]/i
+        let match, matchNew, textNew
+
+        while ((match = orderedListOpenRegex.exec(text))) {
+            const listType = match[1]
+            textNew = text.substring(0, match.index)
+
+            matchNew = orderedListCloseRegex.exec(match[2])
+
+            try {
+                if (!matchNew) throw new Error("Ordered list not closed")
+
+                let listContent = matchNew[1]
+
+                // 去除内容开头和结尾的多余 <br>
+                listContent = trimBrTags(listContent)
+
+                // 处理列表项 [*]
+                listContent = listContent.replace(/\[\*](.*?)(?=\[\*]|$)/gis, "<li>$1</li>")
+
+                textNew += `<ol>${listContent}</ol>`
+                textNew += text.substring(match.index + 6 + listType.length + 1 + matchNew[0].length)
+
+                text = textNew
+            } catch (error) {
+                console.error("Ordered list parsing error:", error)
+                return text
+            }
+        }
+
+        // 再处理无序列表 [list]
+        const unorderedListOpenRegex = /\[list]([\s\S]*)/i
+        const unorderedListCloseRegex = /([\s\S]*?)\[\/list]/i
+
+        while ((match = unorderedListOpenRegex.exec(text))) {
+            textNew = text.substring(0, match.index)
+
+            matchNew = unorderedListCloseRegex.exec(match[1])
+
+            try {
+                if (!matchNew) throw new Error("Unordered list not closed")
+
+                let listContent = matchNew[1]
+
+                // 去除内容开头和结尾的多余 <br>
+                listContent = trimBrTags(listContent)
+
+                // 处理列表项 [*]
+                listContent = listContent.replace(/\[\*](.*?)(?=\[\*]|$)/gis, "<li>$1</li>")
+
+                textNew += `<ol class="unordered">${listContent}</ol>`
+                textNew += text.substring(match.index + 6 + matchNew[0].length)
+
+                text = textNew
+            } catch (error) {
+                console.error("Unordered list parsing error:", error)
+                return text
+            }
+        }
+
+        return text
+    }
+
+    /**
      * 解析 BBCode 为 HTML
      */
     const parsedContent = computed(() => {
@@ -314,17 +383,8 @@ export const useBBCodeParser = ({ content, boxStates, boxCounters, resetBoxes, r
             return createProfileLink(userId, username, qtipId)
         })
 
-        // 7. 列表
-        // 有序列表 [list=TYPE]（TYPE 可以是任意值）
-        html = html.replace(/\[list=([^\]]+)](.*?)\[\/list]/gis, (match, type, content) => {
-            return `<ol>${trimBrTags(content)}</ol>`
-        })
-        // 无序列表 [list]（默认）
-        html = html.replace(/\[list](.*?)\[\/list]/gis, (match, content) => {
-            return `<ol class="unordered">${trimBrTags(content)}</ol>`
-        })
-        // 列表项 [*]（同时支持有序和无序列表）
-        html = html.replace(/\[\*](.*?)(?=\[\*]|<\/[ou]l>)/gis, "<li>$1</li>")
+        // 7. 列表（支持嵌套）
+        html = parseLists(html)
 
         // email
         html = html.replace(/\[email=(.*?)](.*?)\[\/email]/gis, '<a href="mailto:$1">$2</a>')

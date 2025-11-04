@@ -10,17 +10,18 @@
   },
   "dependencies": {
     "monaco-editor": "^0.54.0",
+    "splitpanes": "^4.0.4",
     "vue": "^3.5.22"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.16",
-    "@types/node": "24.9.2",
+    "@types/node": "24.10.0",
     "@vitejs/plugin-vue": "6.0.1",
     "@vue/tsconfig": "0.8.1",
     "tailwindcss": "4.1.16",
     "typescript": "5.9.3",
     "vite": "7.1.12",
     "vite-plugin-monaco-editor-esm": "^2.0.2",
-    "vue-tsc": "3.1.2"
+    "vue-tsc": "3.1.3"
   }
 }

@@ -13,6 +13,7 @@
 /* 基础样式 */
 @import "./base.css";
 @import "./scrollbar.css";
+@import "./tailwind.css";
 
 /* BBCode 样式 */
 @import "./bbcode-base.css";

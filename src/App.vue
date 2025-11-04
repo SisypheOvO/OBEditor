@@ -2,26 +2,26 @@
     <div class="flex flex-col h-screen bg-[#1e1e1e] text-[#d4d4d4]">
         <EditorToolbar v-if="showToolbar" :tags="bbcodeTags" @insert-tag="handleInsertTag" />
 
-        <div class="flex flex-1 overflow-hidden">
-            <div class="editor flex-1 min-w-0 transition-all duration-300" :class="{ 'flex-none w-1/2': showPreview }">
+        <splitpanes  class=" flex flex-1 overflow-hidden">
+            <pane class="editor min-w-0 transition-all duration-300" min-size="40" size="50">
                 <span class="sr-only">BBCode 编辑器</span>
                 <div class="absolute h-(--header-height) px-2 flex flex-col justify-center">
                     <span class="text-[10px] text-[#9c8dcf]">https://osu.ppy.sh/users/35628968</span>
                 </div>
                 <MonacoEditor ref="editorRef" v-model="content" :options="editorOptions" @editor-mounted="handleEditorMounted" />
-            </div>
+            </pane>
 
-            <div v-if="showPreview" class="preview flex-1 border-l border-[#3c3c3c] overflow-y-hidden bg-[#17181c]">
+            <pane v-if="showPreview" class="preview flex-1 min-w-0 border-l border-[#3c3c3c] overflow-y-hidden bg-[#17181c]" min-size="20" size="50">
                 <BBCodePreview class="mx-auto" :content="content" />
-            </div>
-        </div>
+            </pane>
+        </splitpanes>
 
         <EditorStatusBar :line="cursorPosition.line" :column="cursorPosition.column" :selected="cursorPosition.selected" :length="content.length" />
     </div>
 </template>
 
 <script setup lang="ts">
-    import { ref, computed, watch } from "vue"
+    import { ref, computed, watch, nextTick, onUnmounted } from "vue"
     import MonacoEditor from "./components/MonacoEditor.vue"
     import EditorToolbar from "./components/EditorToolbar.vue"
     import BBCodePreview from "./components/BBCodePreview.vue"
@@ -29,6 +29,8 @@
     import * as monaco from "monaco-editor"
     import { bbcodeTags, type BBCodeTag } from "./config/bbcodeTags"
     import { defaultContent } from "./config/defaultContent"
+    import { Splitpanes, Pane } from "splitpanes"
+    import "splitpanes/dist/splitpanes.css"
 
     // Props
     interface Props {
@@ -48,12 +50,9 @@
         "update:modelValue": [value: string]
     }>()
 
-    // 编辑器状态
     const content = ref(props.modelValue || defaultContent)
     const editorRef = ref<InstanceType<typeof MonacoEditor>>()
     let editorInstance: monaco.editor.IStandaloneCodeEditor | null = null
-
-    // 光标位置
     const cursorPosition = ref({ line: 1, column: 1, selected: 0 })
 
     // 编辑器配置

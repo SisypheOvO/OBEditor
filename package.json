@@ -23,7 +23,7 @@
     "tailwindcss": "4.1.16",
     "typescript": "5.9.3",
     "prettier": "3.6.2",
-    "vite": "7.1.12",
+    "vite": "7.2.0",
     "vite-plugin-monaco-editor-esm": "^2.0.2",
     "vite-plugin-top-level-await": "^1.6.0",
     "vite-plugin-wasm": "^3.5.0",

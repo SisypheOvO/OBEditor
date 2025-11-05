@@ -4,8 +4,8 @@ import { OsynicOsuApiV2GlooClient } from "@osynicite/osynic-osuapi"
 import type { OToken, User } from "@osynicite/osynic-osuapi"
 
 // Client configuration
-const clientId = ref<string>("YOUR_CLIENT_ID") // TODO To register your own app and get a client ID at https://osu.ppy.sh/home/account/edit
-const redirectUri = ref<string>("YOUR_REDIRECT_URI") // TODO Deploy your own OAuth server, you can fork a https://github.com/Islatri/deno_osynic_oauth then host it on deno.dev
+const clientId = ref<string>("45494") // TODO To register your own app and get a client ID at https://osu.ppy.sh/home/account/edit
+const redirectUri = ref<string>("https://obeditor-oauth.deno.dev/callback") // TODO Deploy your own OAuth server, you can fork a https://github.com/Islatri/deno_osynic_oauth then host it on deno.dev
 const proxyUrl = ref<string>("YOUR_PROXY_URL") // TODO Deploy your own CORS server, you can fork a https://github.com/Islatri/deno_osynic_cors then host it on deno.dev
 const TOKEN_STORAGE_KEY = "obe_token"
 

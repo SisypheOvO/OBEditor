@@ -1,5 +1,50 @@
+<template>
+    <div data-auth-button-container class="relative">
+        <!-- Button -->
+        <button @click="handleAuthClick" class="relative w-10 h-10 rounded-md overflow-hidden border outline-0 border-[#3c3c3c] hover:outline hover:outline-[#ff66aa] transition-all hover:shadow-lg hover:shadow-[#ff66aa]/20 hover:cursor-pointer flex items-center justify-center bg-[#2e3038]">
+            <img v-if="isAuthenticated && userData" :src="userData.avatar_url" :alt="userData.username" class="w-full h-full object-cover" />
+            <img v-else :src="guestAvatarUrl" alt="Guest" class="w-full h-full object-cover" />
+        </button>
+
+        <!-- Dropdown Menu -->
+        <transition enter-active-class="transition duration-100" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
+            <div v-show="showDropdown && isAuthenticated" class="absolute right-0 mt-4 w-56 bg-[#22242a]/95 backdrop-blur-md outline-[1.5px] outline-[#585858] rounded-lg shadow-2xl shadow-black/60 overflow-hidden z-50">
+                <!-- User Info Section -->
+                <div class="px-5 py-4 bg-linear-to-br from-[#2e3038] to-[#1a1b1e]/50">
+                    <div class="space-y-1">
+                        <p class="text-base font-semibold text-[#cccccc] truncate">
+                            {{ userData?.username }}
+                        </p>
+                        <p class="text-sm text-[#999999]">
+                            {{ userData?.country?.name || "Unknown" }}
+                        </p>
+                        <div v-if="userData?.statistics_rulesets?.osu" class="pt-2 space-y-1.5">
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-[#666666]">全球排名</span>
+                                <span class="font-medium text-[#ff66aa]"> #{{ formatNumber(userData.statistics_rulesets.osu.global_rank) }} </span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs">
+                                <span class="text-[#666666]">表现值</span>
+                                <span class="font-medium text-[#ff66aa]"> {{ formatNumber(userData.statistics_rulesets.osu.pp) }} PP </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="h-px bg-linear-to-r from-transparent via-[#3c3c3c]/40 to-transparent"></div>
+
+                <!-- Logout Button -->
+                <div class="p-2">
+                    <button @click="handleLogout" class="w-full px-4 py-2 text-sm font-medium text-[#999999] bg-[#2e3038]/40 hover:bg-[hsl(var(--hsl-l1))] hover:text-[#1a1b1e] rounded-lg transition-all duration-250 ease-out">登出</button>
+                </div>
+            </div>
+        </transition>
+    </div>
+</template>
+
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue"
+import { ref, computed, onMounted, nextTick } from "vue"
 import { OsynicOsuApiV2GlooClient } from "@osynicite/osynic-osuapi"
 import type { OToken, User } from "@osynicite/osynic-osuapi"
 
@@ -110,13 +155,22 @@ const fetchUserData = async () => {
 const handleAuthClick = () => {
     if (isAuthenticated.value) {
         showDropdown.value = !showDropdown.value
+
+        if (showDropdown.value) {
+            nextTick(() => {
+                document.addEventListener('click', handleClickOutside)
+            })
+        } else {
+            document.removeEventListener('click', handleClickOutside)
+        }
     } else {
-        globalThis.open(authUrl.value, "_blank")
+        globalThis.open(authUrl.value, "_self")
     }
 }
 
 const handleLogout = () => {
     showDropdown.value = false
+    document.removeEventListener('click', handleClickOutside)
     if (client.value) {
         client.value.revokeCurrentToken().catch((e) => {
             console.error("Failed to revoke token:", e)
@@ -133,12 +187,12 @@ const handleClickOutside = (e: MouseEvent) => {
     const target = e.target as HTMLElement
     if (!target.closest("[data-auth-button-container]")) {
         showDropdown.value = false
+        document.removeEventListener('click', handleClickOutside)
     }
 }
 
 onMounted(() => {
-    document.addEventListener("click", handleClickOutside)
-
+    // if redirected from OAuth
     const callbackToken = parseOAuthCallback()
     if (callbackToken) {
         globalThis.location.hash = ""
@@ -149,15 +203,12 @@ onMounted(() => {
         return
     }
 
+    // if a token is stored already
     const storedToken = loadTokenFromStorage()
     if (storedToken) {
         initializeClient(storedToken)
         isAuthenticated.value = true
         fetchUserData()
-    }
-
-    return () => {
-        document.removeEventListener("click", handleClickOutside)
     }
 })
 
@@ -166,48 +217,3 @@ const formatNumber = (num: number | null | undefined): string => {
     return num.toLocaleString()
 }
 </script>
-
-<template>
-    <div data-auth-button-container class="relative">
-        <!-- Button -->
-        <button @click="handleAuthClick" class="relative w-10 h-10 p-0 rounded-lg overflow-hidden border-3 border-[#3c3c3c] hover:border-[#ff66aa] transition-all hover:shadow-lg hover:shadow-[#ff66aa]/20 hover:scale-110 hover:cursor-pointer flex items-center justify-center bg-[#2e3038]">
-            <img v-if="isAuthenticated && userData" :src="userData.avatar_url" :alt="userData.username" class="w-full h-full object-cover" />
-            <img v-else :src="guestAvatarUrl" alt="Guest" class="w-full h-full object-cover" />
-        </button>
-
-        <!-- Dropdown Menu (优化版本) -->
-        <transition enter-active-class="transition duration-100" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-            <div v-show="showDropdown && isAuthenticated" class="absolute right-0 mt-3 w-56 bg-[#22242a]/95 backdrop-blur-md border border-[#3c3c3c] rounded-sm shadow-2xl shadow-black/40 overflow-hidden z-50">
-                <!-- User Info Section -->
-                <div class="px-5 py-4 bg-linear-to-br from-[#2e3038] to-[#1a1b1e]/50">
-                    <div class="space-y-1">
-                        <p class="text-base font-semibold text-[#cccccc] truncate">
-                            {{ userData?.username }}
-                        </p>
-                        <p class="text-sm text-[#999999]">
-                            {{ userData?.country?.name || "Unknown" }}
-                        </p>
-                        <div v-if="userData?.statistics_rulesets?.osu" class="pt-2 space-y-1.5">
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="text-[#666666]">全球排名</span>
-                                <span class="font-medium text-[#ff66aa]"> #{{ formatNumber(userData.statistics_rulesets.osu.global_rank) }} </span>
-                            </div>
-                            <div class="flex justify-between items-center text-xs">
-                                <span class="text-[#666666]">表现值</span>
-                                <span class="font-medium text-[#ff66aa]"> {{ formatNumber(userData.statistics_rulesets.osu.pp) }} PP </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Divider -->
-                <div class="h-px bg-linear-to-r from-transparent via-[#3c3c3c]/40 to-transparent"></div>
-
-                <!-- Logout Button -->
-                <div class="p-2">
-                    <button @click="handleLogout" class="w-full px-4 py-2.5 text-sm font-medium text-[#999999] bg-[#2e3038]/40 hover:bg-[#ff66aa] hover:text-[#1a1b1e] rounded-lg transition-all duration-150 ease-out">登出</button>
-                </div>
-            </div>
-        </transition>
-    </div>
-</template>

@@ -52,7 +52,10 @@
 - [ ] 支持size的快捷选项
 - [ ] 如果可能，添加左右同步滚动功能
 - [x] 支持 Oauth 认证
-- [ ] 在profile Card 中显示 friend / mutual / not friend 和 bell mapper or not 信息
+  - [ ] 在profile Card 中显示与其他用户有关的信息
+    - [ ] friend / mutual / not friend
+    - [ ] bell mapper / not (probably not possible with nowadays official api)
+  - [ ] 用服务端替代 server.js
 - [x] 重构整理BBCodePreview的代码
   - [x] 提取解析逻辑到 `composables/useBBCodeParser.ts`
   - [x] 创建子组件：BBCodeContent.vue, BBCodeHeader.vue
@@ -65,13 +68,17 @@
 - [ ] 尝试阅读osu-web源码，寻找有无更强可用性的解析bbcode、渲染方案（防止未预测的情况下渲染结果与官方不同）
 - [ ] 尝试在profile的基础上兼容forum、beatmap description、team description
 - [ ] 尝试添加多种模式：
-  - [ ] 右侧实时渲染
-  - [ ] 类似md的编辑时即刻渲染出效果的模式（由于基于 MonacoEditor 似乎不太可能）
+  - [x] 右侧实时渲染
+  - [ ] 类似md的编辑时即刻渲染出效果的模式（相当于完全重搓渲染）
 - [ ] 添加用户设置内容
   - [ ] 设置保存策略：快捷键+按钮或auto save
     - [ ] 保存方式：localstorage（强调此为非安全易被清除的）、上传云（这意味着我可能要支持云？）、导出文件
     - [ ] 若为localstorage，可添加侧栏用于选择要编辑的内容
   - [ ] 选择跟据不同内容（profile、forum、beatmap description、team description）切换样式
+    - [x] profile
+    - [ ] forum
+    - [ ] beatmap description
+    - [ ] team description
 
 ## Bugs to Fix
 

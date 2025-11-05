@@ -25,17 +25,3 @@ export interface UserInfo {
         colour: string
     }>
 }
-
-export interface FriendRelation {
-    target_id: number
-    relation_type: string
-    mutual: boolean
-}
-
-export interface UserWithFriends extends UserInfo {
-    friends?: FriendRelation[]
-}
-
-export interface UserApiResponse {
-    users: UserInfo[]
-}

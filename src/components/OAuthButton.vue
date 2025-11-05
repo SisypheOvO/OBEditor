@@ -45,115 +45,22 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, nextTick } from "vue"
-import { OsynicOsuApiV2GlooClient } from "@osynicite/osynic-osuapi"
-import type { OToken, User } from "@osynicite/osynic-osuapi"
+import { storeToRefs } from "pinia";
+import { useAuthStore } from "@/stores/auth"
+import type { User } from "@osynicite/osynic-osuapi"
 
-// Client configuration
-const clientId = ref<string>("45494") // TODO To register your own app and get a client ID at https://osu.ppy.sh/home/account/edit OK
-const redirectUri = ref<string>("https://obeditor-oauth.deno.dev/callback") // TODO Deploy your own OAuth server, you can fork a https://github.com/Islatri/deno_osynic_oauth then host it on deno.dev OK
-const proxyUrl = ref<string>("https://obeditor-cors.deno.dev/") // TODO Deploy your own CORS server, you can fork a https://github.com/Islatri/deno_osynic_cors then host it on deno.dev OK
-const TOKEN_STORAGE_KEY = "obe_token"
+// Use auth store
+const authStore = useAuthStore()
+const { isAuthenticated, userData } = storeToRefs(authStore)
 
-const authUrl = computed(() => {
-    if (!clientId.value || !redirectUri.value) return ""
-    const scopes = ["public", "identify", "friends.read"].join(" ")
-    return `https://osu.ppy.sh/oauth/authorize?client_id=${clientId.value}&redirect_uri=${encodeURIComponent(redirectUri.value)}&response_type=code&scope=${encodeURIComponent(scopes)}`
-})
-
-// State
-const isAuthenticated = ref(false)
-const userData = ref<User | null>(null)
+// Local UI state
 const showDropdown = ref(false)
-const client = ref<OsynicOsuApiV2GlooClient | null>(null)
 
 // Computed
 const guestAvatarUrl = computed(() => "/images/guest.png")
 
-interface StoredToken extends OToken {
-    stored_at: number
-}
-
-const saveTokenToStorage = (tokenData: OToken) => {
-    const storedToken: StoredToken = {
-        ...tokenData,
-        stored_at: Date.now(),
-    }
-    localStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(storedToken))
-}
-
-const loadTokenFromStorage = (): OToken | null => {
-    const stored = localStorage.getItem(TOKEN_STORAGE_KEY)
-    if (!stored) return null
-
-    try {
-        const storedToken: StoredToken = JSON.parse(stored)
-        const now = Date.now()
-        const elapsed = Math.floor((now - storedToken.stored_at) / 1000)
-
-        if (elapsed >= storedToken.expires_in) {
-            localStorage.removeItem(TOKEN_STORAGE_KEY)
-            return null
-        }
-
-        return {
-            access_token: storedToken.access_token,
-            refresh_token: storedToken.refresh_token,
-            expires_in: storedToken.expires_in - elapsed,
-            token_type: storedToken.token_type,
-        }
-    } catch (e) {
-        console.error("Failed to parse stored token:", e)
-        localStorage.removeItem(TOKEN_STORAGE_KEY)
-        return null
-    }
-}
-
-const clearStoredToken = () => {
-    localStorage.removeItem(TOKEN_STORAGE_KEY)
-}
-
-const parseOAuthCallback = (): OToken | null => {
-    const hash = globalThis.location.hash.substring(1)
-    if (!hash) return null
-
-    const params = new URLSearchParams(hash)
-    const accessToken = params.get("access_token")
-    const refreshToken = params.get("refresh_token")
-    const expiresIn = params.get("expires_in")
-    const tokenType = params.get("token_type")
-
-    if (!accessToken || !expiresIn || !tokenType) {
-        return null
-    }
-
-    return {
-        access_token: accessToken,
-        refresh_token: refreshToken || undefined,
-        expires_in: Number.parseInt(expiresIn, 10),
-        token_type: tokenType,
-    }
-}
-
-const initializeClient = (tokenData: OToken) => {
-    const newClient = new OsynicOsuApiV2GlooClient(tokenData)
-    newClient.setProxyUrl(proxyUrl.value)
-    client.value = newClient
-    return newClient
-}
-
-const fetchUserData = async () => {
-    if (!client.value) return
-
-    try {
-        const data = await client.value.getOwnData()
-        userData.value = data
-    } catch (e) {
-        console.error("Failed to fetch user data:", e)
-    }
-}
-
 const handleAuthClick = () => {
-    if (isAuthenticated.value) {
+    if (isAuthenticated) {
         showDropdown.value = !showDropdown.value
 
         if (showDropdown.value) {
@@ -164,23 +71,14 @@ const handleAuthClick = () => {
             document.removeEventListener('click', handleClickOutside)
         }
     } else {
-        globalThis.open(authUrl.value, "_self")
+        authStore.login()
     }
 }
 
 const handleLogout = () => {
     showDropdown.value = false
     document.removeEventListener('click', handleClickOutside)
-    if (client.value) {
-        client.value.revokeCurrentToken().catch((e) => {
-            console.error("Failed to revoke token:", e)
-        })
-    }
-    clearStoredToken()
-    isAuthenticated.value = false
-    userData.value = null
-    client.value = null
-    globalThis.location.reload()
+    authStore.logout()
 }
 
 const handleClickOutside = (e: MouseEvent) => {
@@ -192,24 +90,7 @@ const handleClickOutside = (e: MouseEvent) => {
 }
 
 onMounted(() => {
-    // if redirected from OAuth
-    const callbackToken = parseOAuthCallback()
-    if (callbackToken) {
-        globalThis.location.hash = ""
-        saveTokenToStorage(callbackToken)
-        initializeClient(callbackToken)
-        isAuthenticated.value = true
-        fetchUserData()
-        return
-    }
-
-    // if a token is stored already
-    const storedToken = loadTokenFromStorage()
-    if (storedToken) {
-        initializeClient(storedToken)
-        isAuthenticated.value = true
-        fetchUserData()
-    }
+    authStore.initializeAuth()
 })
 
 type RulesetKey = keyof NonNullable<User['statistics_rulesets']>

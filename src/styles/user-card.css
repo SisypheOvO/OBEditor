@@ -298,6 +298,10 @@
     opacity: 0;
 }
 
+.qtip-content .user-action-button:hover .user-action-button__icon--hover-visible {
+    opacity: 1;
+}
+
 .qtip-content .user-action-button__icon {
     align-items: center;
     display: inline-flex;
@@ -308,6 +312,7 @@
     top: 0;
     width: 100%;
     will-change: opacity;
+    transition: opacity 0.15s ease-in-out;
 }
 
 .qtip-content .user-action-button:hover {

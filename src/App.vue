@@ -73,6 +73,7 @@ interface PaneInfo {
 
 const storePaneSize = ({ prevPane }: { prevPane: PaneInfo }) => {
     localStorage.paneSize = prevPane.size // Store in persistent localStorage.
+    paneSize.value = prevPane.size
 }
 
 // 编辑器配置

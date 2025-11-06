@@ -8,7 +8,11 @@
 
         <!-- Dropdown Menu -->
         <transition enter-active-class="transition duration-100" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-            <div v-show="showDropdown && isAuthenticated" class="absolute right-0 mt-4 w-56 bg-[#22242a]/95 backdrop-blur-md outline outline-[hsla(var(--hsl-b5),0.9)] rounded-lg shadow-2xl shadow-black/60 overflow-hidden z-50 object-cover" :style="userData?.cover?.custom_url ? { backgroundImage: 'url(' + userData?.cover?.custom_url + ')', backgroundPosition: 'center center', backgroundSize: 'cover' } : {}">
+            <div
+                v-show="showDropdown && isAuthenticated"
+                class="absolute right-0 mt-4 w-56 bg-[#22242a]/95 backdrop-blur-md outline outline-[hsla(var(--hsl-b5),0.9)] rounded-lg shadow-2xl shadow-black/60 overflow-hidden z-50 object-cover"
+                :style="userData?.cover?.custom_url ? { backgroundImage: 'url(' + userData?.cover?.custom_url + ')', backgroundPosition: 'center center', backgroundSize: 'cover' } : {}"
+            >
                 <!-- User Info Section -->
                 <div class="px-5 py-4 bg-[hsla(var(--hsl-b5),0.7)]">
                     <div class="space-y-1">
@@ -72,10 +76,10 @@ const handleAuthClick = () => {
 
         if (showDropdown.value) {
             nextTick(() => {
-                document.addEventListener('click', handleClickOutside)
+                document.addEventListener("click", handleClickOutside)
             })
         } else {
-            document.removeEventListener('click', handleClickOutside)
+            document.removeEventListener("click", handleClickOutside)
         }
     } else {
         authStore.login()
@@ -84,7 +88,7 @@ const handleAuthClick = () => {
 
 const handleLogout = () => {
     showDropdown.value = false
-    document.removeEventListener('click', handleClickOutside)
+    document.removeEventListener("click", handleClickOutside)
     authStore.logout()
 }
 
@@ -92,7 +96,7 @@ const handleClickOutside = (e: MouseEvent) => {
     const target = e.target as HTMLElement
     if (!target.closest("[data-auth-button-container]")) {
         showDropdown.value = false
-        document.removeEventListener('click', handleClickOutside)
+        document.removeEventListener("click", handleClickOutside)
     }
 }
 
@@ -100,7 +104,7 @@ onMounted(() => {
     authStore.initializeAuth()
 })
 
-type RulesetKey = keyof NonNullable<User['statistics_rulesets']>
+type RulesetKey = keyof NonNullable<User["statistics_rulesets"]>
 
 const getRuleset = (ud: User | null) => {
     if (!ud || !ud.statistics_rulesets) return undefined

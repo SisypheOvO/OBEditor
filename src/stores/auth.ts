@@ -30,7 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
 
     const checkEnvConfig = () => {
         if (!import.meta.env.VITE_OSU_CLIENT_ID || import.meta.env.VITE_OSU_CLIENT_ID === "nil") {
-            console.warn('⚠️ please config your OAuth client_id! Copy `.env.development.example` and input your own configuration.')
+            console.warn("⚠️ please config your OAuth client_id! Copy `.env.development.example` and input your own configuration.")
             return false
         }
         return true
@@ -148,7 +148,7 @@ export const useAuthStore = defineStore("auth", () => {
     // Authentication actions
     const login = () => {
         if (!checkEnvConfig()) {
-            alert('请先配置 OAuth client_id')
+            alert("请先配置 OAuth client_id")
             return
         }
         if (authUrl.value) {

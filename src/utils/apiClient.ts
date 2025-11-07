@@ -1,4 +1,4 @@
-const API_BASE = "http://localhost:3000"
+const API_BASE = import.meta.env.VITE_OSU_PROXY_URL || "http://localhost:8000/"
 
 export class ApiError extends Error {
     constructor(

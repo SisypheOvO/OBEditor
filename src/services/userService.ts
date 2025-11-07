@@ -1,5 +1,4 @@
 import { apiClient } from "@/utils/apiClient"
-import { API_ENDPOINTS } from "@/constants/bbcode"
 import type { UserInfo } from "@/types/user"
 
 /**
@@ -9,7 +8,7 @@ import type { UserInfo } from "@/types/user"
  */
 export const getUserInfo = async (userId: string): Promise<UserInfo | null> => {
     try {
-        const data = await apiClient.get<{ users: UserInfo[] }>(`${API_ENDPOINTS.USER_LOOKUP}?ids[]=${userId}`)
+        const data = await apiClient.get<{ users: UserInfo[] }>(`https://osu.ppy.sh/users/lookup?ids%5B%5D=${userId}`)
         return data.users[0] || null
     } catch (error) {
         console.error("Failed to fetch user info:", error)

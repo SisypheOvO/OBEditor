@@ -11,9 +11,9 @@ const TOKEN_STORAGE_KEY = "obe_token"
 
 export const useAuthStore = defineStore("auth", () => {
     // Configuration
-    const clientId = ref<string>(import.meta.env.VITE_OSU_CLIENT_ID || "nil")
-    const redirectUri = ref<string>(import.meta.env.VITE_OSU_REDIRECT_URI || "http://localhost:4000/callback")
-    const proxyUrl = ref<string>(import.meta.env.VITE_OSU_PROXY_URL || "http://localhost:8000/")
+    const clientId = import.meta.env.VITE_OSU_CLIENT_ID || "nil"
+    const redirectUri = import.meta.env.VITE_OSU_REDIRECT_URI || "http://localhost:4000/callback"
+    const proxyUrl = import.meta.env.VITE_OSU_PROXY_URL || "http://localhost:8000/"
 
     // State
     const client = ref<OsynicOsuApiV2GlooClient | null>(null)
@@ -23,9 +23,9 @@ export const useAuthStore = defineStore("auth", () => {
 
     // Computed
     const authUrl = computed(() => {
-        if (!clientId.value || !redirectUri.value) return ""
+        if (!clientId || !redirectUri) return ""
         const scopes = ["public", "identify", "friends.read"].join(" ")
-        return `https://osu.ppy.sh/oauth/authorize?client_id=${clientId.value}&redirect_uri=${encodeURIComponent(redirectUri.value)}&response_type=code&scope=${encodeURIComponent(scopes)}`
+        return `https://osu.ppy.sh/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scopes)}`
     })
 
     const checkEnvConfig = () => {
@@ -101,7 +101,7 @@ export const useAuthStore = defineStore("auth", () => {
     // Client management
     const initializeClient = (tokenData: OToken) => {
         const newClient = new OsynicOsuApiV2GlooClient(tokenData)
-        newClient.setProxyUrl(proxyUrl.value)
+        newClient.setProxyUrl(proxyUrl)
         client.value = newClient
         return newClient
     }

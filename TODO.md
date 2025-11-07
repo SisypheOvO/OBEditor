@@ -57,7 +57,7 @@
     - [x] friend / mutual / not friend
     - [ ] bell mapper / not (probably not possible with nowadays official api)
 - [ ] 添加github图标
-  - [ ] 用服务端替代 server.js
+- [x] 用服务端替代 server.js
 - [x] 重构整理BBCodePreview的代码
   - [x] 提取解析逻辑到 `composables/useBBCodeParser.ts`
   - [x] 创建子组件：BBCodeContent.vue, BBCodeHeader.vue

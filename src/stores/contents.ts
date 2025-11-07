@@ -18,6 +18,10 @@ export const useContentsStore = defineStore("contents", () => {
     const currentContentId = ref<string | null>(null)
     const currentContent = ref<string>("")
 
+    // Track original state when switching to a content
+    const originalContent = ref<string>("")
+    const originalUpdatedAt = ref<number>(0)
+
     // Debounce timer for auto-save
     let saveTimeout: ReturnType<typeof setTimeout> | null = null
 
@@ -35,10 +39,16 @@ export const useContentsStore = defineStore("contents", () => {
                 const content = contents.value.find((c) => c.id === storedCurrentId)
                 if (content) {
                     currentContent.value = content.content
+                    // Set original state when loading
+                    originalContent.value = content.content
+                    originalUpdatedAt.value = content.updatedAt
                 }
             } else if (contents.value.length > 0) {
                 currentContentId.value = contents.value[0].id
                 currentContent.value = contents.value[0].content
+                // Set original state when loading
+                originalContent.value = contents.value[0].content
+                originalUpdatedAt.value = contents.value[0].updatedAt
             }
         } catch (e) {
             console.error("Failed to load contents from storage:", e)
@@ -52,10 +62,20 @@ export const useContentsStore = defineStore("contents", () => {
             if (currentContentId.value) {
                 const index = contents.value.findIndex((c) => c.id === currentContentId.value)
                 if (index !== -1) {
-                    // Only update updatedAt if content actually changed
+                    // Only update if content changed
                     if (contents.value[index].content !== currentContent.value) {
                         contents.value[index].content = currentContent.value
-                        contents.value[index].updatedAt = Date.now()
+                        console.log(originalContent.value)
+
+                        // If content matches original, restore original updatedAt
+                        // Otherwise, use current time
+                        if (currentContent.value === originalContent.value) {
+                            console.log(111)
+                            contents.value[index].updatedAt = originalUpdatedAt.value
+                        } else {
+                            console.log(222)
+                            contents.value[index].updatedAt = Date.now()
+                        }
                     }
                 }
             }
@@ -81,6 +101,9 @@ export const useContentsStore = defineStore("contents", () => {
         contents.value.unshift(newContent)
         currentContentId.value = newContent.id
         currentContent.value = content
+        // Set original state for new content
+        originalContent.value = content
+        originalUpdatedAt.value = newContent.updatedAt
         saveContentsToStorage()
         return newContent
     }
@@ -89,11 +112,22 @@ export const useContentsStore = defineStore("contents", () => {
     const updateContent = (id: string, updates: Partial<Pick<BBCodeContent, "title" | "content">>) => {
         const index = contents.value.findIndex((c) => c.id === id)
         if (index !== -1) {
+            const newUpdatedAt = Date.now()
             contents.value[index] = {
                 ...contents.value[index],
                 ...updates,
-                updatedAt: Date.now(),
+                updatedAt: newUpdatedAt,
             }
+
+            // If updating current content, update original state and currentContent
+            if (id === currentContentId.value) {
+                if (updates.content !== undefined) {
+                    currentContent.value = updates.content
+                    originalContent.value = updates.content
+                }
+                originalUpdatedAt.value = newUpdatedAt
+            }
+
             saveContentsToStorage()
         }
     }
@@ -120,6 +154,9 @@ export const useContentsStore = defineStore("contents", () => {
                 if (contents.value.length > 0) {
                     currentContentId.value = contents.value[0].id
                     currentContent.value = contents.value[0].content
+                    // Set original state when switching after deletion
+                    originalContent.value = contents.value[0].content
+                    originalUpdatedAt.value = contents.value[0].updatedAt
                 } else {
                     createContent("Welcome", defaultContent)
                 }
@@ -139,9 +176,11 @@ export const useContentsStore = defineStore("contents", () => {
             }
             saveContentsToStorage()
 
-            // Switch to new content
+            // Switch to new content and save original state
             currentContentId.value = id
             currentContent.value = content.content
+            originalContent.value = content.content
+            originalUpdatedAt.value = content.updatedAt
         }
     }
 

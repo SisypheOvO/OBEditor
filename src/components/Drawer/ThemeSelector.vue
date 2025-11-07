@@ -1,25 +1,34 @@
 <template>
-    <div class="px-2 py-2 border-t border-[#3c3c3c]">
-        <label class="text-xs text-[#888888] pl-2 block mb-1">Editor Theme</label>
-        <select v-model="selectedTheme" @change="handleThemeChange" class="w-full px-2 py-1.5 bg-[#141413] border border-[#3c3c3c] rounded-md text-sm text-[#d4d4d4] hover:border-[#4c4c4c] focus:border-[#d97757] focus:outline-none cursor-pointer transition-colors">
-            <option v-for="theme in themeStore.availableThemes" :key="theme.id" :value="theme.id">
-                {{ theme.name }}
-            </option>
-        </select>
+    <div class="px-2 pt-2 pb-2.5 border-t border-[#3c3c3c]">
+        <BaseSelect
+            v-model="selectedTheme"
+            :options="themeOptions"
+            label="Editor Theme"
+            placeholder="Select a theme..."
+            @change="handleThemeChange"
+        />
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue"
+import { ref, computed, watch } from "vue"
 import { useThemeStore } from "@/stores/theme"
+import BaseSelect from "@/components/ui/BaseSelect.vue"
 
 const themeStore = useThemeStore()
 const selectedTheme = ref(themeStore.currentTheme.id)
 
-// Watch for theme changes from store
+// Convert themes to select options format
+const themeOptions = computed(() =>
+    themeStore.availableThemes.map((theme) => ({
+        value: theme.id,
+        label: theme.name,
+    }))
+)
+
 watch(
     () => themeStore.currentTheme.id,
-    (newTheme) => {
+    (newTheme: string) => {
         selectedTheme.value = newTheme
     }
 )

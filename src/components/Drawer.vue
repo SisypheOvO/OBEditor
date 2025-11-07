@@ -6,7 +6,7 @@
     <Transition name="drawer">
         <div v-if="isOpen" class="fixed left-0 top-0 h-full w-80 bg-[#1f1e1d] border-r border-[#3c3c3c] z-50 flex flex-col font-[anthropicSans]">
             <!-- Header -->
-            <div class="flex items-center justify-between p-3 border-b border-[#3c3c3c]">
+            <div class="flex items-center justify-between px-3 py-2 border-b border-[#3c3c3c]">
                 <button
                     class="inline-flex items-center justify-center relative shrink-0 can-focus select-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none disabled:drop-shadow-none border-transparent transition font-base duration-300 ease-[cubic-bezier(0.165,0.85,0.45,1)] h-8 w-8 rounded-md active:scale-95 group aria-expanded:bg-transparent aria-expanded:hover:bg-[#141413] text-[#8e8d86]"
                     type="button"
@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </button>
-                <h2 class="text-lg font-semibold text-[#d4d4d4] font-[anthropicSerif]">Osu! BBCode Editor</h2>
+                <h2 class="text-lg font-semibold text-[#d4d4d4] font-[anthropicSerif] m-0">Osu! BBCode Editor</h2>
             </div>
 
             <button aria-label="New chat" class="mx-2 my-2 h-10 px-2 py-2 rounded-lg active:scale-[0.985] whitespace-nowrap group transition ease-in-out active:scale-100 flex justify-start bg-transparent hover:bg-[#c6613f14] active:bg-[#d9775726]" @click="handleCreateNew">
@@ -50,12 +50,12 @@
             </button>
 
             <!-- Contents List -->
-            <div class="flex-1 flex flex-col overflow-y-auto px-2 py-2 gap-1">
-                <h3 aria-hidden="false" class="text-[#c2c0b6] pb-2 mt-1 text-sm select-none pl-2 sticky top-0 z-10 bg-linear-to-b from-[#1f1e1d] from-50% to-[#1f1e1d66]">Recents</h3>
+            <div class="flex-1 flex flex-col overflow-y-auto px-2 py-2 gap-0.5">
+                <h3 aria-hidden="false" class="text-[#c2c0b6] pb-2 mt-1 text-sm select-none pl-2 sticky top-0 z-10 bg-linear-to-b from-[#1f1e1d] from-50% to-[#1f1e1d66] m-0">Recents</h3>
                 <div v-if="contentsStore.contents.length === 0" class="text-center text-[#888888] py-8 text-sm">No contents yet</div>
 
                 <div v-for="content in contentsStore.contents" :key="content.id" class="group relative mb-1">
-                    <button :class="['w-full text-left px-3 h-10 rounded-md transition-colors flex flex-row items-center gap-2', content.id === contentsStore.currentContentId ? 'bg-black' : 'bg-transparent hover:bg-[#141413]']" @click="handleSwitchContent(content.id)">
+                    <button :class="['w-full text-left px-3 h-10 rounded-lg transition-colors flex flex-row items-center gap-2', content.id === contentsStore.currentContentId ? 'bg-black' : 'bg-transparent hover:bg-[#141413]']" @click="handleSwitchContent(content.id)">
                         <span class="truncate text-sm font-medium whitespace-nowrap flex-1 group-hover:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] group-focus-within:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] mask-size-[100%_100%] mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] flex flex-row gap-1 items-baseline baseline">
                             <span class="text-[#bdbbb1] group-hover:text-[#faf9f5] transition-colors">{{ content.title }}</span>
                             <span class="text-xs text-[#888888] group-hover:text-[#9e9e9e] transition-colors">{{ formatDate(content.updatedAt) }}</span>
@@ -70,12 +70,12 @@
             </div>
 
             <!-- Footer Info -->
-            <div class="px-4 py-3 border-t border-[#3c3c3c] text-xs text-[#888888]">
+            <div class="pl-4 py-1 pr-2 border-t border-[#3c3c3c] text-xs text-[#888888]">
                 <div class="flex items-center gap-1">
                     <i class="fas fa-info-circle"></i>
                     <span>Stored in localStorage</span>
                     <div class="flex-1"></div>
-                    <a href="https://github.com/SisypheOvO/OBEditor" target="_blank" rel="noopener noreferrer" class="no-underline flex items-center justify-center w-7 h-7 border-0 bg-transparent text-[#cccccc] rounded cursor-pointer transition-all duration-200 hover:bg-[#3c3c3c] hover:text-white active:bg-[#505050] active:scale-95 text-sm" title="view on Github">
+                    <a href="https://github.com/SisypheOvO/OBEditor" target="_blank" rel="noopener noreferrer" class="no-underline flex items-center justify-center w-9 h-9 border-0 bg-transparent text-[#cccccc] rounded-lg cursor-pointer transition-all duration-200 hover:bg-[#272727] hover:text-white active:bg-[#505050] active:scale-95 text-sm" title="view on Github">
                         <i class="fab fa-github text-[18px]"></i>
                     </a>
                 </div>

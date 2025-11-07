@@ -2,7 +2,7 @@
     <div class="relative" ref="menuContainer">
         <!-- Three dots button -->
         <button
-            class="w-6 h-6 flex items-center justify-center rounded bg-transparent hover:bg-[#3c3c3c] text-[#cccccc] transition-all opacity-0 group-hover:opacity-100"
+            class="w-6 h-6 flex items-center justify-center rounded-md bg-transparent hover:bg-[#252525] text-[#cccccc] transition-all opacity-0 group-hover:opacity-100"
             :class="{ 'opacity-100 bg-[#3c3c3c]': isOpen }"
             title="More options"
             @click.stop="toggleMenu"
@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted, nextTick } from "vue"
+import { ref, computed, onUnmounted, nextTick } from "vue"
 
 const emit = defineEmits<{
     rename: []
@@ -83,7 +83,7 @@ const menuStyle = computed(() => {
 
     // Calculate position
     let left = rect.left
-    let top = rect.bottom + 4
+    let top = rect.bottom + 6
 
     // Adjust if menu goes off right edge
     if (left + menuWidth > windowWidth) {

@@ -42,10 +42,6 @@
 
         <OAuthButton />
 
-        <a href="https://github.com/SisypheOvO/OBEditor" target="_blank" rel="noopener noreferrer" class="no-underline" :class="buttonClass" title="view on Github">
-            <i class="fab fa-github text-[18px]"></i>
-        </a>
-
         <button :class="[buttonClass, showPreview ? 'text-[#4ec9b0]' : '']" :title="showPreview ? '隐藏预览 (Ctrl+P)' : '显示预览 (Ctrl+P)'" @click="$emit('toggle-preview')">
             <i :class="showPreview ? 'fas fa-eye' : 'fas fa-eye-slash'"></i>
         </button>

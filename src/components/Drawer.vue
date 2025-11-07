@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue"
+import { ref, onMounted, onUnmounted } from "vue"
 import { useContentsStore } from "@/stores/contents"
 import ContentItemMenu from "./Drawer/ContentItemMenu.vue"
 import RenameModal from "./Drawer/RenameModal.vue"
@@ -110,6 +110,23 @@ const renameModalOpen = ref(false)
 const deleteModalOpen = ref(false)
 const currentOperatingId = ref<string | null>(null)
 const currentTitle = ref("")
+
+// Auto-refresh for relative time display
+const currentTime = ref(Date.now())
+let timeUpdateInterval: ReturnType<typeof setInterval> | null = null
+
+onMounted(() => {
+    // Update currentTime every minute to refresh relative timestamps
+    timeUpdateInterval = setInterval(() => {
+        currentTime.value = Date.now()
+    }, 60000) // Update every 60 seconds
+})
+
+onUnmounted(() => {
+    if (timeUpdateInterval) {
+        clearInterval(timeUpdateInterval)
+    }
+})
 
 const handleCreateNew = () => {
     contentsStore.createContent()
@@ -160,7 +177,8 @@ const handleDeleteClose = () => {
 }
 
 const formatDate = (timestamp: number): string => {
-    const now = Date.now()
+    // Use currentTime.value to trigger reactivity and auto-refresh
+    const now = currentTime.value
     const diff = now - timestamp
     const minutes = Math.floor(diff / 60000)
     const hours = Math.floor(diff / 3600000)

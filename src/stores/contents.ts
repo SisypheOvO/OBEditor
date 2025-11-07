@@ -52,8 +52,11 @@ export const useContentsStore = defineStore("contents", () => {
             if (currentContentId.value) {
                 const index = contents.value.findIndex((c) => c.id === currentContentId.value)
                 if (index !== -1) {
-                    contents.value[index].content = currentContent.value
-                    contents.value[index].updatedAt = Date.now()
+                    // Only update updatedAt if content actually changed
+                    if (contents.value[index].content !== currentContent.value) {
+                        contents.value[index].content = currentContent.value
+                        contents.value[index].updatedAt = Date.now()
+                    }
                 }
             }
 

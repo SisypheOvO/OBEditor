@@ -62,10 +62,10 @@
                         </span>
                     </button>
 
-                    <!-- Delete button (shown on hover) -->
-                    <button v-if="contentsStore.contents.length > 1" class="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded bg-[#3c3c3c] hover:bg-[#d32f2f] text-[#cccccc] transition-all opacity-0 group-hover:opacity-100" title="删除" @click.stop="handleDelete(content.id)">
-                        <i class="fas fa-trash text-xs"></i>
-                    </button>
+                    <!-- Three dots menu (shown on hover) -->
+                    <div v-if="contentsStore.contents.length > 1" class="absolute right-2 top-1/2 -translate-y-1/2">
+                        <ContentItemMenu @rename="handleRename(content.id)" @delete="handleDelete(content.id)" />
+                    </div>
                 </div>
             </div>
 
@@ -82,10 +82,18 @@
             </div>
         </div>
     </Transition>
+
+    <!-- Modals -->
+    <RenameModal :is-open="renameModalOpen" :current-title="currentTitle" @close="handleRenameClose" @confirm="handleRenameConfirm" />
+    <DeleteModal :is-open="deleteModalOpen" @close="handleDeleteClose" @confirm="handleDeleteConfirm" />
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue"
 import { useContentsStore } from "@/stores/contents"
+import ContentItemMenu from "./Drawer/ContentItemMenu.vue"
+import RenameModal from "./Drawer/RenameModal.vue"
+import DeleteModal from "./Drawer/DeleteModal.vue"
 
 defineProps<{
     isOpen: boolean
@@ -97,6 +105,12 @@ const emit = defineEmits<{
 
 const contentsStore = useContentsStore()
 
+// Modal states
+const renameModalOpen = ref(false)
+const deleteModalOpen = ref(false)
+const currentOperatingId = ref<string | null>(null)
+const currentTitle = ref("")
+
 const handleCreateNew = () => {
     contentsStore.createContent()
 }
@@ -105,10 +119,44 @@ const handleSwitchContent = (id: string) => {
     contentsStore.switchToContent(id)
 }
 
-const handleDelete = (id: string) => {
-    if (confirm("Are you sure you want to delete this content?")) {
-        contentsStore.deleteContent(id)
+const handleRename = (id: string) => {
+    const content = contentsStore.contents.find((c) => c.id === id)
+    if (!content) return
+
+    currentOperatingId.value = id
+    currentTitle.value = content.title
+    renameModalOpen.value = true
+}
+
+const handleRenameConfirm = (newTitle: string) => {
+    if (currentOperatingId.value && newTitle.trim() !== "") {
+        contentsStore.updateContent(currentOperatingId.value, { title: newTitle.trim() })
     }
+    renameModalOpen.value = false
+    currentOperatingId.value = null
+}
+
+const handleRenameClose = () => {
+    renameModalOpen.value = false
+    currentOperatingId.value = null
+}
+
+const handleDelete = (id: string) => {
+    currentOperatingId.value = id
+    deleteModalOpen.value = true
+}
+
+const handleDeleteConfirm = () => {
+    if (currentOperatingId.value) {
+        contentsStore.deleteContent(currentOperatingId.value)
+    }
+    deleteModalOpen.value = false
+    currentOperatingId.value = null
+}
+
+const handleDeleteClose = () => {
+    deleteModalOpen.value = false
+    currentOperatingId.value = null
 }
 
 const formatDate = (timestamp: number): string => {

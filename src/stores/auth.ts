@@ -19,6 +19,8 @@ export const useAuthStore = defineStore("auth", () => {
     const client = ref<OsynicOsuApiV2GlooClient | null>(null)
     const userData = ref<User | null>(null)
     const isAuthenticated = ref(false)
+    const isLoadingUserData = ref(false)
+    const userDataLoadFailed = ref(false)
     const friendsList = ref<FriendXApiVersion[]>([])
 
     // Computed
@@ -109,11 +111,19 @@ export const useAuthStore = defineStore("auth", () => {
     const fetchUserData = async () => {
         if (!client.value) return
 
+        isLoadingUserData.value = true
+        userDataLoadFailed.value = false
+
         try {
             const data = await client.value.getOwnData()
             userData.value = data
+            userDataLoadFailed.value = false
         } catch (e) {
             console.error("Failed to fetch user data:", e)
+            userData.value = null
+            userDataLoadFailed.value = true
+        } finally {
+            isLoadingUserData.value = false
         }
     }
 
@@ -166,6 +176,8 @@ export const useAuthStore = defineStore("auth", () => {
         }
         clearStoredToken()
         isAuthenticated.value = false
+        isLoadingUserData.value = false
+        userDataLoadFailed.value = false
         userData.value = null
         client.value = null
         friendsList.value = []
@@ -200,6 +212,8 @@ export const useAuthStore = defineStore("auth", () => {
         client,
         userData,
         isAuthenticated,
+        isLoadingUserData,
+        userDataLoadFailed,
         friendsList,
         authUrl,
 

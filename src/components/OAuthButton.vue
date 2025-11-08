@@ -2,13 +2,16 @@
     <div data-auth-button-container class="relative">
         <!-- Button -->
         <button @click="handleAuthClick" class="relative w-10 h-10 rounded-md overflow-hidden border outline-0 border-[#3c3c3c] hover:outline hover:outline-[#ff66aa] transition-all hover:shadow-md hover:shadow-[#ff66aa]/20 hover:cursor-pointer flex items-center justify-center bg-[#2e3038]">
-            <!-- Loading spinner -->
-            <div v-if="!avatarLoaded" class="absolute inset-0 flex items-center justify-center bg-[#2e3038]">
+            <!-- Loading spinner - shown when waiting for userData or when image is loading -->
+            <div v-if="shouldShowLoadingOnly || !avatarLoaded" class="absolute inset-0 flex items-center justify-center bg-[#2e3038]">
                 <div class="spinner"></div>
             </div>
 
-            <img v-if="isAuthenticated && userData" :src="userData?.avatar_url" :alt="userData?.username" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" :class="avatarLoaded ? 'opacity-100' : 'opacity-0'" @load="onAvatarLoad" />
-            <img v-else :src="guestAvatarUrl" alt="Guest" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" :class="avatarLoaded ? 'opacity-100' : 'opacity-0'" @load="onAvatarLoad" />
+            <!-- User avatar - shown only when authenticated and userData is loaded -->
+            <img v-if="shouldShowUserAvatar" :src="userData?.avatar_url" :alt="userData?.username" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" :class="avatarLoaded ? 'opacity-100' : 'opacity-0'" @load="onAvatarLoad" @error="onAvatarError" />
+
+            <!-- Guest avatar - shown when not authenticated or userData failed to load -->
+            <img v-if="shouldShowGuestAvatar" :src="guestAvatarUrl" alt="Guest" class="absolute inset-0 w-full h-full object-cover transition-opacity duration-300" :class="avatarLoaded ? 'opacity-100' : 'opacity-0'" @load="onAvatarLoad" @error="onAvatarError" />
         </button>
 
         <!-- Dropdown Menu -->
@@ -39,11 +42,11 @@
                         </p>
                         <div v-if="userData?.statistics_rulesets?.osu" class="pt-2 space-y-1.5">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-[#aeaeae]">{{ t('oauthDropdown.globalRanking') }}</span>
+                                <span class="text-[#aeaeae]">{{ t("oauthDropdown.globalRanking") }}</span>
                                 <span class="font-medium text-[#ff66aa]"> #{{ formatNumber(getRuleset(userData)?.global_rank) }} </span>
                             </div>
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-[#aeaeae]">{{ t('oauthDropdown.pp') }}</span>
+                                <span class="text-[#aeaeae]">{{ t("oauthDropdown.pp") }}</span>
                                 <span class="font-medium text-[#ff66aa]"> {{ formatNumber(getRuleset(userData)?.pp) }} PP </span>
                             </div>
                         </div>
@@ -55,8 +58,8 @@
 
                 <!-- Logout Button -->
                 <div class="relative p-2 bg-[hsla(var(--hsl-b5),0.7)] flex flex-row gap-2">
-                    <button @click="handleImportBBCode" class="flex-1 h-8 w-fit px-4 text-sm font-medium text-center whitespace-nowrap text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.8)] hover:text-black rounded-full transition-all duration-250 ease-out">{{ t('oauthDropdown.importProfile') }}</button>
-                    <button @click="handleLogout" class="h-8 w-fit px-4 text-sm font-medium text-center whitespace-nowrap text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.3)] hover:text-[#b7bcc4] rounded-full transition-all duration-250 ease-out">{{ t('oauthDropdown.signOut') }}</button>
+                    <button @click="handleImportBBCode" class="flex-1 h-8 w-fit px-4 text-sm font-medium text-center whitespace-nowrap text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.8)] hover:text-black rounded-full transition-all duration-250 ease-out">{{ t("oauthDropdown.importProfile") }}</button>
+                    <button @click="handleLogout" class="h-8 w-fit px-4 text-sm font-medium text-center whitespace-nowrap text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.3)] hover:text-[#b7bcc4] rounded-full transition-all duration-250 ease-out">{{ t("oauthDropdown.signOut") }}</button>
                 </div>
             </div>
         </transition>
@@ -73,12 +76,25 @@ import { useI18n } from "vue-i18n"
 
 // Use auth store
 const authStore = useAuthStore()
-const { isAuthenticated, userData } = storeToRefs(authStore)
+const { isAuthenticated, userData, isLoadingUserData, userDataLoadFailed } = storeToRefs(authStore)
 const contentsStore = useContentsStore()
 const { t } = useI18n()
 
 const avatarLoaded = ref(false)
 const coverLoaded = ref(false)
+
+// Avatar display logic based on state machine
+const shouldShowLoadingOnly = computed(() => {
+    return isAuthenticated.value && isLoadingUserData.value
+})
+
+const shouldShowUserAvatar = computed(() => {
+    return isAuthenticated.value && !isLoadingUserData.value && userData.value !== null
+})
+
+const shouldShowGuestAvatar = computed(() => {
+    return !isAuthenticated.value || (isAuthenticated.value && !isLoadingUserData.value && (userDataLoadFailed.value || userData.value === null))
+})
 
 const handleImportBBCode = () => {
     userBBCodeImport()
@@ -117,15 +133,27 @@ watch(
     { immediate: true }
 )
 
+// Reset avatar loaded state when the avatar source changes
 watch(
-    () => [isAuthenticated.value, userData.value?.avatar_url],
+    () => {
+        if (shouldShowUserAvatar.value) {
+            return userData.value?.avatar_url
+        } else if (shouldShowGuestAvatar.value) {
+            return guestAvatarUrl.value
+        }
+        return null
+    },
     () => {
         avatarLoaded.value = false
-    },
-    { immediate: true }
+    }
 )
 
 const onAvatarLoad = () => {
+    avatarLoaded.value = true
+}
+
+const onAvatarError = () => {
+    // Even on error, mark as loaded to hide spinner
     avatarLoaded.value = true
 }
 

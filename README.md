@@ -61,7 +61,7 @@ THIS API IS INSANE AS HELL.
 - **Editor**: Monaco Editor, Monaco-Themes
 - **Build Tool**: Vite
 - **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS v4, fontawesome
 - **Width Support**: splitpanes
 
 ### Usage
@@ -191,7 +191,7 @@ Contributions are welcome! Please feel free to submit a Pull Request or Issue.
 - **编辑器**: Monaco Editor, Monaco-Themes
 - **构建工具**: Vite
 - **开发语言**: TypeScript
-- **样式框架**: Tailwind CSS v4
+- **样式框架**: Tailwind CSS v4, fontawesome
 - **宽度支持**: splitpanes
 
 ### 使用方法

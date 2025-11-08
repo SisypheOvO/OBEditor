@@ -77,6 +77,11 @@
   - [x] `services/bbcodeService.ts` - BBCode 解析服务
 - [x] icon换用更标准的icon，如fontawesome
 - [x] 简化EditorToolbar逻辑
+- [ ] i18n 支持
+- [x] 获取 userdata 时头像显示 loading
+- [ ] 优化 userCard 组件
+  - [ ] 添加 loading 状态
+  - [ ] 优化封面和头像加载逻辑，添加过渡动画
 - [ ] 尝试阅读osu-web源码，寻找有无更强可用性的解析bbcode、渲染方案（防止未预测的情况下渲染结果与官方不同）
 - [ ] 尝试在profile的基础上兼容forum、beatmap description、team description
 - [ ] 尝试添加多种模式：

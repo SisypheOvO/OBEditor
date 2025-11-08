@@ -28,5 +28,11 @@ export const kr = {
         charsCount: "문자 수",
         selectedCharsCount: "선택된 문자 수",
     },
+    oauthDropdown: {
+        importProfile: "프로필 가져오기",
+        signOut: "로그아웃",
+        globalRanking: "글로벌 랭킹",
+        pp: "PP",
+    },
     // Add more translations as needed
 }

@@ -28,5 +28,11 @@ export const ja = {
         charsCount: "文字数",
         selectedCharsCount: "選択済み文字数",
     },
+    oauthDropdown: {
+        importProfile: "プロフィールをインポート",
+        signOut: "サインアウト",
+        globalRanking: "グローバルランキング",
+        pp: "PP",
+    },
     // Add more translations as needed
 }

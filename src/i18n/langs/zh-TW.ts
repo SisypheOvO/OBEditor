@@ -28,5 +28,11 @@ export const zhTW = {
         charsCount: "字元數",
         selectedCharsCount: "已選取",
     },
+    oauthDropdown: {
+        importProfile: "匯入個人資料",
+        signOut: "登出",
+        globalRanking: "全球排名",
+        pp: "PP",
+    },
     // Add more translations as needed
 }

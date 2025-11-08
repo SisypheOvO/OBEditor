@@ -28,5 +28,11 @@ export const en = {
         charsCount: "Chars",
         selectedCharsCount: "Selected",
     },
+    oauthDropdown: {
+        importProfile: "Import Profile",
+        signOut: "Sign Out",
+        globalRanking: "Global Ranking",
+        pp: "PP",
+    },
     // Add more translations as needed
 }

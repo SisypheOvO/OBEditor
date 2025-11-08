@@ -28,5 +28,11 @@ export const ru = {
         charsCount: "Символов",
         selectedCharsCount: "Выделено символов",
     },
+    oauthDropdown: {
+        importProfile: "Импортировать профиль",
+        signOut: "Выйти",
+        globalRanking: "Глобальный рейтинг",
+        pp: "PP",
+    },
     // Add more translations as needed
 }

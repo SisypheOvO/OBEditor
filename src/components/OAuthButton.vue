@@ -13,7 +13,7 @@
 
         <!-- Dropdown Menu -->
         <transition enter-active-class="transition duration-100" enter-from-class="opacity-0 scale-95" enter-to-class="opacity-100 scale-100" leave-active-class="transition duration-100" leave-from-class="opacity-100 scale-100" leave-to-class="opacity-0 scale-95">
-            <div v-show="showDropdown && isAuthenticated" class="absolute right-0 mt-4 w-56 bg-[#22242a]/95 backdrop-blur-md outline outline-[hsla(var(--hsl-b5),0.9)] rounded-lg shadow-2xl shadow-black/60 overflow-hidden z-50">
+            <div v-show="showDropdown && isAuthenticated" class="absolute right-0 mt-4 w-fit bg-[#22242a]/95 backdrop-blur-md outline outline-[hsla(var(--hsl-b5),0.9)] rounded-lg shadow-2xl shadow-black/60 overflow-hidden z-50">
                 <transition name="fade-slow">
                     <div
                         v-if="userData?.cover?.custom_url && coverLoaded"
@@ -39,11 +39,11 @@
                         </p>
                         <div v-if="userData?.statistics_rulesets?.osu" class="pt-2 space-y-1.5">
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-[#aeaeae]">全球排名</span>
+                                <span class="text-[#aeaeae]">{{ t('oauthDropdown.globalRanking') }}</span>
                                 <span class="font-medium text-[#ff66aa]"> #{{ formatNumber(getRuleset(userData)?.global_rank) }} </span>
                             </div>
                             <div class="flex justify-between items-center text-xs">
-                                <span class="text-[#aeaeae]">表现值</span>
+                                <span class="text-[#aeaeae]">{{ t('oauthDropdown.pp') }}</span>
                                 <span class="font-medium text-[#ff66aa]"> {{ formatNumber(getRuleset(userData)?.pp) }} PP </span>
                             </div>
                         </div>
@@ -55,8 +55,8 @@
 
                 <!-- Logout Button -->
                 <div class="relative p-2 bg-[hsla(var(--hsl-b5),0.7)] flex flex-row gap-2">
-                    <button @click="handleImportBBCode" class="flex-1 h-8 w-16 px-4 text-sm font-medium text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.8)] hover:text-black rounded-full transition-all duration-250 ease-out">导入me!</button>
-                    <button @click="handleLogout" class="h-8 w-16 px-4 text-sm font-medium text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.3)] hover:text-[#b7bcc4] rounded-full transition-all duration-250 ease-out">登出</button>
+                    <button @click="handleImportBBCode" class="flex-1 h-8 w-fit px-4 text-sm font-medium text-center whitespace-nowrap text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.8)] hover:text-black rounded-full transition-all duration-250 ease-out">{{ t('oauthDropdown.importProfile') }}</button>
+                    <button @click="handleLogout" class="h-8 w-fit px-4 text-sm font-medium text-center whitespace-nowrap text-[#1a1b1e] bg-[hsla(var(--hsl-l1),0.5)] hover:bg-[hsla(var(--hsl-l1),0.3)] hover:text-[#b7bcc4] rounded-full transition-all duration-250 ease-out">{{ t('oauthDropdown.signOut') }}</button>
                 </div>
             </div>
         </transition>
@@ -68,10 +68,12 @@ import { ref, computed, onMounted, nextTick, inject, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useAuthStore } from "@/stores/auth"
 import type { User } from "@osynicite/osynic-osuapi"
+import { useI18n } from "vue-i18n"
 
 // Use auth store
 const authStore = useAuthStore()
 const { isAuthenticated, userData } = storeToRefs(authStore)
+const { t } = useI18n()
 
 const userBBCodeImport = inject("userBBCodeImport") as () => void
 

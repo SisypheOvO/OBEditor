@@ -54,7 +54,7 @@
                 <h3 aria-hidden="false" class="text-[#c2c0b6] pb-2 mt-1 text-sm select-none pl-2 sticky top-0 z-10 bg-linear-to-b from-[#1f1e1d] from-50% to-[#1f1e1d66] m-0">{{ t("drawer.recentContents") }}</h3>
                 <div v-if="contentsStore.contents.length === 0" class="text-center text-[#888888] py-8 text-sm">{{ t("drawer.emptyState") }}</div>
 
-                <div v-for="content in contentsStore.contents" :key="content.id" class="group relative" @touchstart="handleTouchStart($event, content.id)" @touchend="handleTouchEnd" @touchmove="handleTouchMove">
+                <div v-for="content in sortedContents" :key="content.id" class="group relative" @touchstart="handleTouchStart($event, content.id)" @touchend="handleTouchEnd" @touchmove="handleTouchMove">
                     <button :class="['w-full text-left px-3 h-10 rounded-lg transition-colors flex flex-row items-center gap-2', content.id === contentsStore.currentContentId ? 'bg-black' : 'bg-transparent hover:bg-[#141413]']" @click="handleSwitchContent(content.id)">
                         <span class="select-none truncate text-sm font-medium whitespace-nowrap flex-1 group-hover:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] group-focus-within:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] mask-size-[100%_100%] mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] flex flex-row gap-1 items-baseline baseline">
                             <span class="text-[#bdbbb1] group-hover:text-[#faf9f5] transition-colors">{{ content.title }}</span>
@@ -124,6 +124,13 @@ const isMobile = computed(() => {
     return window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window
 })
 
+const sortedContents = computed(() => {
+    return [...contentsStore.contents].sort((a, b) => {
+        // sorted by updatedAt descending
+        return b.updatedAt - a.updatedAt
+    })
+})
+
 // Long press detection for mobile
 let longPressTimer: ReturnType<typeof setTimeout> | null = null
 let touchMoved = false
@@ -135,7 +142,7 @@ const handleTouchStart = (event: TouchEvent, contentId: string) => {
     longPressTimer = setTimeout(() => {
         if (!touchMoved) {
             // Close other menus
-            Object.keys(contentMenuOpen.value).forEach(key => {
+            Object.keys(contentMenuOpen.value).forEach((key) => {
                 contentMenuOpen.value[key] = false
             })
             // Open this menu

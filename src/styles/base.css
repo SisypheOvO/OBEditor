@@ -7,9 +7,10 @@ body,
 }
 
 /* mobile dragging behavior control */
-html, body {
-  overscroll-behavior: none;
-  touch-action: pan-y pan-x;
+html,
+body {
+    overscroll-behavior: none;
+    touch-action: pan-y pan-x;
 }
 
 @font-face {

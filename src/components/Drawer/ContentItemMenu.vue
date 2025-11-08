@@ -1,7 +1,7 @@
 <template>
     <div class="relative" ref="menuContainer">
         <!-- Three dots button -->
-        <button class="w-6 h-6 flex items-center justify-center rounded-md bg-transparent hover:bg-[#252525] text-[#cccccc] transition-all opacity-0 group-hover:opacity-100" :class="{ 'opacity-100 bg-[#3c3c3c]': isOpen }" title="More options" @click.stop="toggleMenu">
+        <button class="w-6 h-6 flex items-center justify-center rounded-md bg-transparent hover:bg-[#252525] text-[#cccccc] transition-all opacity-0 group-hover:block group-hover:opacity-100" :class="isOpen ? 'opacity-100 bg-[#3c3c3c]' : 'hidden opacity-0'" title="More options" @click.stop="toggleMenu">
             <i class="fas fa-ellipsis text-sm"></i>
         </button>
 
@@ -44,14 +44,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onUnmounted, nextTick } from "vue"
+import { ref, computed, onUnmounted, nextTick, watch } from "vue"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
 
+const props = defineProps<{
+    isOpen?: boolean
+}>()
+
 const emit = defineEmits<{
     rename: []
     delete: []
+    "update:isOpen": [value: boolean]
 }>()
 
 const menuContainer = ref<HTMLElement>()
@@ -59,25 +64,50 @@ const dropdownRef = ref<HTMLElement>()
 const isOpen = ref(false)
 const buttonRect = ref<DOMRect | null>(null)
 
+const isMobile = computed(() => {
+    return window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window
+})
+
+watch(
+    () => props.isOpen,
+    (newVal) => {
+        if (newVal !== undefined) {
+            isOpen.value = newVal
+            if (newVal) {
+                updateMenuPosition()
+                nextTick(() => {
+                    document.addEventListener("click", handleClickOutside)
+                    document.addEventListener("touchstart", handleClickOutside)
+                })
+            } else {
+                document.removeEventListener("click", handleClickOutside)
+                document.removeEventListener("touchstart", handleClickOutside)
+            }
+        }
+    }
+)
+
 const menuStyle = computed(() => {
     if (!buttonRect.value) return {}
 
     const rect = buttonRect.value
-    const menuWidth = 200 // Approximate menu width
+    const menuWidth = 200
     const windowWidth = window.innerWidth
     const windowHeight = window.innerHeight
 
-    // Calculate position
     let left = rect.left
-    let top = rect.bottom + 6
+    let top = rect.bottom
+    if (isMobile.value) {
+        top += 16
+    } else {
+        top += 6
+    }
 
-    // Adjust if menu goes off right edge
     if (left + menuWidth > windowWidth) {
         left = rect.right - menuWidth
     }
 
-    // Adjust if menu goes off bottom edge
-    const menuHeight = 120 // Approximate menu height
+    const menuHeight = 120
     if (top + menuHeight > windowHeight) {
         top = rect.top - menuHeight - 4
     }
@@ -89,43 +119,59 @@ const menuStyle = computed(() => {
     }
 })
 
-const toggleMenu = (event: Event) => {
-    event.stopPropagation()
-    if (!isOpen.value && menuContainer.value) {
+const updateMenuPosition = () => {
+    if (menuContainer.value) {
         buttonRect.value = menuContainer.value.getBoundingClientRect()
-    }
-    isOpen.value = !isOpen.value
-
-    if (isOpen.value) {
-        nextTick(() => {
-            document.addEventListener("click", handleClickOutside)
-        })
-    } else {
-        document.removeEventListener("click", handleClickOutside)
     }
 }
 
-const handleClickOutside = (event: MouseEvent) => {
+const toggleMenu = (event: Event) => {
+    event.stopPropagation()
+    const newState = !isOpen.value
+    isOpen.value = newState
+    emit("update:isOpen", newState)
+
+    if (newState) {
+        updateMenuPosition()
+        nextTick(() => {
+            document.addEventListener("click", handleClickOutside)
+            document.addEventListener("touchstart", handleClickOutside)
+        })
+    } else {
+        document.removeEventListener("click", handleClickOutside)
+        document.removeEventListener("touchstart", handleClickOutside)
+    }
+}
+
+const handleClickOutside = (event: MouseEvent | TouchEvent) => {
     const target = event.target as HTMLElement
     if (menuContainer.value && !menuContainer.value.contains(target) && dropdownRef.value && !dropdownRef.value.contains(target)) {
         isOpen.value = false
+        emit("update:isOpen", false)
         document.removeEventListener("click", handleClickOutside)
+        document.removeEventListener("touchstart", handleClickOutside)
     }
 }
 
 const handleRename = () => {
-    isOpen.value = false
-    document.removeEventListener("click", handleClickOutside)
+    closeMenu()
     emit("rename")
 }
 
 const handleDelete = () => {
-    isOpen.value = false
-    document.removeEventListener("click", handleClickOutside)
+    closeMenu()
     emit("delete")
+}
+
+const closeMenu = () => {
+    isOpen.value = false
+    emit("update:isOpen", false)
+    document.removeEventListener("click", handleClickOutside)
+    document.removeEventListener("touchstart", handleClickOutside)
 }
 
 onUnmounted(() => {
     document.removeEventListener("click", handleClickOutside)
+    document.removeEventListener("touchstart", handleClickOutside)
 })
 </script>

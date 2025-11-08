@@ -45,7 +45,7 @@
                             </svg>
                         </div>
                     </div>
-                    <div class="transition-all duration-200 text-[#d97757] font-[510] text-sm">{{ t("drawer.createNew") }}</div>
+                    <div class="transition-all duration-200 text-[#d97757] font-[510] text-sm select-none">{{ t("drawer.createNew") }}</div>
                 </div>
             </button>
 
@@ -54,25 +54,23 @@
                 <h3 aria-hidden="false" class="text-[#c2c0b6] pb-2 mt-1 text-sm select-none pl-2 sticky top-0 z-10 bg-linear-to-b from-[#1f1e1d] from-50% to-[#1f1e1d66] m-0">{{ t("drawer.recentContents") }}</h3>
                 <div v-if="contentsStore.contents.length === 0" class="text-center text-[#888888] py-8 text-sm">{{ t("drawer.emptyState") }}</div>
 
-                <div v-for="content in contentsStore.contents" :key="content.id" class="group relative mb-1">
+                <div v-for="content in contentsStore.contents" :key="content.id" class="group relative mb-1" @touchstart="handleTouchStart($event, content.id)" @touchend="handleTouchEnd" @touchmove="handleTouchMove">
                     <button :class="['w-full text-left px-3 h-10 rounded-lg transition-colors flex flex-row items-center gap-2', content.id === contentsStore.currentContentId ? 'bg-black' : 'bg-transparent hover:bg-[#141413]']" @click="handleSwitchContent(content.id)">
-                        <span class="truncate text-sm font-medium whitespace-nowrap flex-1 group-hover:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] group-focus-within:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] mask-size-[100%_100%] mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] flex flex-row gap-1 items-baseline baseline">
+                        <span class="select-none truncate text-sm font-medium whitespace-nowrap flex-1 group-hover:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] group-focus-within:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] mask-size-[100%_100%] mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] flex flex-row gap-1 items-baseline baseline">
                             <span class="text-[#bdbbb1] group-hover:text-[#faf9f5] transition-colors">{{ content.title }}</span>
                             <span class="text-xs text-[#888888] group-hover:text-[#9e9e9e] transition-colors">{{ formatDate(content.updatedAt) }}</span>
                         </span>
                     </button>
 
-                    <!-- Three dots menu (shown on hover) -->
+                    <!-- edit menu -->
                     <div v-if="contentsStore.contents.length > 1" class="absolute right-2 top-1/2 -translate-y-1/2">
-                        <ContentItemMenu @rename="handleRename(content.id)" @delete="handleDelete(content.id)" />
+                        <ContentItemMenu v-model:is-open="contentMenuOpen[content.id]" @rename="handleRename(content.id)" @delete="handleDelete(content.id)" />
                     </div>
                 </div>
             </div>
 
-            <!-- Language Selector -->
             <LanguageSelector />
 
-            <!-- Theme Selector -->
             <ThemeSelector />
 
             <!-- Footer Info -->
@@ -95,7 +93,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from "vue"
+import { ref, computed, onMounted, onUnmounted } from "vue"
 import { useContentsStore } from "@/stores/contents"
 import ContentItemMenu from "./Drawer/ContentItemMenu.vue"
 import RenameModal from "./Drawer/RenameModal.vue"
@@ -119,22 +117,66 @@ const { t } = useI18n()
 const renameModalOpen = ref(false)
 const deleteModalOpen = ref(false)
 const currentOperatingId = ref<string | null>(null)
+const contentMenuOpen = ref<Record<string, boolean>>({})
 const currentTitle = ref("")
 
-// Auto-refresh for relative time display
+const isMobile = computed(() => {
+    return window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window
+})
+
+// Long press detection for mobile
+let longPressTimer: ReturnType<typeof setTimeout> | null = null
+let touchMoved = false
+
+const handleTouchStart = (event: TouchEvent, contentId: string) => {
+    if (!isMobile.value) return
+
+    touchMoved = false
+    longPressTimer = setTimeout(() => {
+        if (!touchMoved) {
+            // Close other menus
+            Object.keys(contentMenuOpen.value).forEach(key => {
+                contentMenuOpen.value[key] = false
+            })
+            // Open this menu
+            contentMenuOpen.value[contentId] = true
+            if (navigator.vibrate) {
+                navigator.vibrate(50)
+            }
+        }
+    }, 500)
+}
+
+const handleTouchEnd = (event: TouchEvent) => {
+    if (longPressTimer) {
+        clearTimeout(longPressTimer)
+        longPressTimer = null
+    }
+}
+
+const handleTouchMove = (event: TouchEvent) => {
+    touchMoved = true
+    if (longPressTimer) {
+        clearTimeout(longPressTimer)
+        longPressTimer = null
+    }
+}
+
 const currentTime = ref(Date.now())
 let timeUpdateInterval: ReturnType<typeof setInterval> | null = null
 
 onMounted(() => {
-    // Update currentTime every minute to refresh relative timestamps
     timeUpdateInterval = setInterval(() => {
         currentTime.value = Date.now()
-    }, 60000) // Update every 60 seconds
+    }, 60000)
 })
 
 onUnmounted(() => {
     if (timeUpdateInterval) {
         clearInterval(timeUpdateInterval)
+    }
+    if (longPressTimer) {
+        clearTimeout(longPressTimer)
     }
 })
 

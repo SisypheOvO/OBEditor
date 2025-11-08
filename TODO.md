@@ -77,11 +77,12 @@
   - [x] `services/bbcodeService.ts` - BBCode 解析服务
 - [x] icon换用更标准的icon，如fontawesome
 - [x] 简化EditorToolbar逻辑
+- [ ] 优化 Drawer 底部空间的样式，汇总为 settings 浮窗
 - [ ] i18n 支持
   - [x] Drawer
   - [x] statusbar
   - [ ] Toolbar
-  - [x] Oauth Dropdown
+  - [x] OAuth Dropdown
   - [ ] Editor 悬浮提示
   - [ ] Default contents
 - [x] 获取 userdata 时头像显示 loading
@@ -89,6 +90,10 @@
   - [ ] 添加 loading 状态
   - [ ] 优化封面和头像加载逻辑，添加过渡动画
 - [ ] 移动端适配
+  - [ ] Drawer
+  - [ ] Toolbar
+  - [ ] OAuth Dropdown
+  - [ ] 左右视窗改为编辑与预览来回切换
 - [ ] 尝试阅读osu-web源码，寻找有无更强可用性的解析bbcode、渲染方案（防止未预测的情况下渲染结果与官方不同）
 - [ ] 尝试在profile的基础上兼容forum、beatmap description、team description
 - [ ] 尝试添加多种模式：

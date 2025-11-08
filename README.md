@@ -86,6 +86,7 @@ THIS API IS INSANE AS HELL.
 
 - I hope you have Node 24.x or higher
 - npm or yarn or pnpm
+- somehow you may need `patch-package` installed already (globally or locally)
 - deno (npm i -g deno)
 
 #### Setup
@@ -219,6 +220,7 @@ Contributions are welcome! Please feel free to submit a Pull Request or Issue.
 
 - 希望你有 Node 24.x 或更高版本
 - npm 或 yarn 或 pnpm
+- 你可能需要已经安装好 `patch-package`（全局或本地）
 - deno (npm i -g deno)
 
 #### 安装步骤

@@ -25,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, provide, onMounted } from "vue"
+import { ref, computed, onMounted } from "vue"
 import { storeToRefs } from "pinia"
 import MonacoEditor from "./components/MonacoEditor.vue"
 import EditorToolbar from "./components/EditorToolbar.vue"
@@ -40,14 +40,12 @@ import { useAuthStore } from "@/stores/auth"
 import { useContentsStore } from "@/stores/contents"
 import { useThemeStore } from "@/stores/theme"
 import "splitpanes/dist/splitpanes.css"
-import { useI18n } from "vue-i18n"
 
 const authStore = useAuthStore()
 const { isAuthenticated, userData } = storeToRefs(authStore)
 
 const contentsStore = useContentsStore()
 const themeStore = useThemeStore()
-const { t } = useI18n()
 
 // Initialize stores
 onMounted(() => {
@@ -62,16 +60,6 @@ const content = computed({
         contentsStore.updateCurrentContentText(newContent)
     },
 })
-
-const userBBCodeImport = () => {
-    if (!isAuthenticated.value || !userData.value) return
-    if (!authStore.userData?.page) return
-    const username = authStore.userData.username
-    const bbcodeContent = authStore.userData.page.raw
-    contentsStore.importFromOAuth(`${username} ${t("drawer.profile")}`, bbcodeContent)
-}
-
-provide("userBBCodeImport", userBBCodeImport)
 
 const showPreview = ref(true)
 const showToolbar = ref(true)

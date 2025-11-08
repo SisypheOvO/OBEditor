@@ -64,24 +64,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, inject, watch } from "vue"
+import { ref, computed, onMounted, nextTick, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useAuthStore } from "@/stores/auth"
 import type { User } from "@osynicite/osynic-osuapi"
+import { useContentsStore } from "@/stores/contents"
 import { useI18n } from "vue-i18n"
 
 // Use auth store
 const authStore = useAuthStore()
 const { isAuthenticated, userData } = storeToRefs(authStore)
+const contentsStore = useContentsStore()
 const { t } = useI18n()
-
-const userBBCodeImport = inject("userBBCodeImport") as () => void
 
 const avatarLoaded = ref(false)
 const coverLoaded = ref(false)
 
 const handleImportBBCode = () => {
     userBBCodeImport()
+}
+
+const userBBCodeImport = () => {
+    if (!isAuthenticated.value || !userData.value) return
+    if (!authStore.userData?.page) return
+    const username = authStore.userData.username
+    const bbcodeContent = authStore.userData.page.raw
+    contentsStore.importFromOAuth(`${username} ${t("drawer.profile")}`, bbcodeContent)
 }
 
 const showDropdown = ref(false)

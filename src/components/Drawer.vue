@@ -50,11 +50,11 @@
             </button>
 
             <!-- Contents List -->
-            <div class="flex-1 flex flex-col overflow-y-auto px-2 py-2 gap-0.5">
+            <div class="flex-1 flex flex-col overflow-y-auto px-2 py-2 gap-1">
                 <h3 aria-hidden="false" class="text-[#c2c0b6] pb-2 mt-1 text-sm select-none pl-2 sticky top-0 z-10 bg-linear-to-b from-[#1f1e1d] from-50% to-[#1f1e1d66] m-0">{{ t("drawer.recentContents") }}</h3>
                 <div v-if="contentsStore.contents.length === 0" class="text-center text-[#888888] py-8 text-sm">{{ t("drawer.emptyState") }}</div>
 
-                <div v-for="content in contentsStore.contents" :key="content.id" class="group relative mb-1" @touchstart="handleTouchStart($event, content.id)" @touchend="handleTouchEnd" @touchmove="handleTouchMove">
+                <div v-for="content in contentsStore.contents" :key="content.id" class="group relative" @touchstart="handleTouchStart($event, content.id)" @touchend="handleTouchEnd" @touchmove="handleTouchMove">
                     <button :class="['w-full text-left px-3 h-10 rounded-lg transition-colors flex flex-row items-center gap-2', content.id === contentsStore.currentContentId ? 'bg-black' : 'bg-transparent hover:bg-[#141413]']" @click="handleSwitchContent(content.id)">
                         <span class="select-none truncate text-sm font-medium whitespace-nowrap flex-1 group-hover:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] group-focus-within:mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] mask-size-[100%_100%] mask-[linear-gradient(to_right,#000000_78%,transparent_95%)] flex flex-row gap-1 items-baseline baseline">
                             <span class="text-[#bdbbb1] group-hover:text-[#faf9f5] transition-colors">{{ content.title }}</span>

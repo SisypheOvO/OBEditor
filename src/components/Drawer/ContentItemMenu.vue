@@ -1,7 +1,7 @@
 <template>
     <div class="relative" ref="menuContainer">
         <!-- Three dots button -->
-        <button class="w-6 h-6 flex items-center justify-center rounded-md bg-transparent hover:bg-[#252525] text-[#cccccc] transition-all opacity-0 group-hover:block group-hover:opacity-100" :class="isOpen ? 'opacity-100 bg-[#3c3c3c]' : 'hidden opacity-0'" title="More options" @click.stop="toggleMenu">
+        <button class="w-6 h-6 flex items-center justify-center rounded-md bg-transparent hover:bg-[#252525] text-[#cccccc] transition-all opacity-0 group-hover:block group-hover:opacity-100" :class="isOpen ? 'opacity-100 bg-[#3c3c3c]' : 'hidden opacity-0'" @click.stop="toggleMenu">
             <i class="fas fa-ellipsis text-sm"></i>
         </button>
 

@@ -28,3 +28,7 @@ archive/*
 *.njsproj
 *.sln
 *.sw?
+
+# Deno files
+deno.json
+deno.lock

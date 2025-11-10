@@ -184,7 +184,7 @@ export const en = {
         email: {
             label: "Email",
             placeholder: "Sisy",
-            documentation: "**Email** - Email link\n\nCreate email link that triggers browser mailto function\n\nExample: `[email=test@gmail.com]Your email name[/email]`",
+            documentation: "**Email** - Email link\n\nCreate email link that triggers browser mailto function\n\nExample: `[email=test{'@'}gmail.com]Your email name[/email]`",
             detail: "osu! email tag",
             hoverInfo: "**Email tag** - Email link\n\nUsage: `[email=email address]display text[/email]`",
         },
@@ -249,7 +249,7 @@ https://sisy.s-ul.eu/UWlCIYOX
 18 70 12 28 https://osu.ppy.sh/users/9650376 Robinia
 [/imagemap]
 
-Email link: [email=test@gmail.com]Sisy's email[/email]
+Email link: [email=test{'@'}gmail.com]Sisy's email[/email]
 
 Embed audio:
 
@@ -274,12 +274,12 @@ Without author attribution
 Code block example:
 
 [code]
-function clickCircles() {
+function clickCircles() {'{'}
     const timing = calculateTiming();
-    if (timing.perfect) {
+    if (timing.perfect) {'{'}
         score += 300;
-    }
-}
+    {'}'}
+{'}'}
 [/code]
 
 Inline code: Use [c]console.log()[/c] for debugging, or check the [c]beatmap.difficulty[/c] property.

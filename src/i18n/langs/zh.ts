@@ -184,7 +184,7 @@ export const zh = {
         email: {
             label: "邮箱",
             placeholder: "Sisy",
-            documentation: "**邮箱** - 邮箱链接\n\n创建触发浏览器mailto功能的邮箱链接\n\n示例: `[email=test@gmail.com]Your email name[/email]`",
+            documentation: "**邮箱** - 邮箱链接\n\n创建触发浏览器mailto功能的邮箱链接\n\n示例: `[email=test{'@'}gmail.com]Your email name[/email]`",
             detail: "osu! 邮箱标签",
             hoverInfo: "**邮箱标签** - 邮箱链接\n\n用法: `[email=邮箱地址]显示内容[/email]`",
         },
@@ -249,7 +249,7 @@ https://sisy.s-ul.eu/UWlCIYOX
 18 70 12 28 https://osu.ppy.sh/users/9650376 Robinia
 [/imagemap]
 
-邮箱链接：[email=test@gmail.com]Sisy 的邮箱[/email]
+邮箱链接：[email=test{'@'}gmail.com]Sisy 的邮箱[/email]
 
 嵌入音频：
 
@@ -274,12 +274,12 @@ https://sisy.s-ul.eu/UWlCIYOX
 代码块示例：
 
 [code]
-function clickCircles() {
+function clickCircles() {'{'}
     const timing = calculateTiming();
-    if (timing.perfect) {
+    if (timing.perfect) {'{'}
         score += 300;
-    }
-}
+    {'}'}
+{'}'}
 [/code]
 
 行内代码：使用 [c]console.log()[/c] 来调试，或者检查 [c]beatmap.difficulty[/c] 属性。

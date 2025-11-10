@@ -184,7 +184,7 @@ export const zhTW = {
         email: {
             label: "電子郵件",
             placeholder: "Sisy",
-            documentation: "**電子郵件** - 電子郵件連結\n\n建立觸發瀏覽器mailto功能的電子郵件連結\n\n範例: `[email=test@gmail.com]Your email name[/email]`",
+            documentation: "**電子郵件** - 電子郵件連結\n\n建立觸發瀏覽器mailto功能的電子郵件連結\n\n範例: `[email=test{'@'}gmail.com]Your email name[/email]`",
             detail: "osu! 電子郵件標籤",
             hoverInfo: "**電子郵件標籤** - 電子郵件連結\n\n用法: `[email=電子郵件位址]顯示內容[/email]`",
         },
@@ -249,7 +249,7 @@ https://sisy.s-ul.eu/UWlCIYOX
 18 70 12 28 https://osu.ppy.sh/users/9650376 Robinia
 [/imagemap]
 
-電子郵件連結：[email=test@gmail.com]Sisy 的電子郵件[/email]
+電子郵件連結：[email=test{'@'}gmail.com]Sisy 的電子郵件[/email]
 
 嵌入音訊：
 
@@ -274,12 +274,12 @@ https://sisy.s-ul.eu/UWlCIYOX
 程式碼區塊範例：
 
 [code]
-function clickCircles() {
+function clickCircles() {'{'}
     const timing = calculateTiming();
-    if (timing.perfect) {
+    if (timing.perfect) {'{'}
         score += 300;
-    }
-}
+    {'}'}
+{'}'}
 [/code]
 
 行內程式碼：使用 [c]console.log()[/c] 來除錯，或者檢查 [c]beatmap.difficulty[/c] 屬性。

@@ -184,7 +184,7 @@ export const kr = {
         email: {
             label: "이메일",
             placeholder: "Sisy",
-            documentation: "**이메일** - 이메일 링크\n\n브라우저의 mailto 기능을 실행하는 이메일 링크를 생성합니다\n\n예제: `[email=test@gmail.com]이메일 이름[/email]`",
+            documentation: "**이메일** - 이메일 링크\n\n브라우저의 mailto 기능을 실행하는 이메일 링크를 생성합니다\n\n예제: `[email=test{'@'}gmail.com]이메일 이름[/email]`",
             detail: "osu! 이메일 태그",
             hoverInfo: "**이메일 태그** - 이메일 링크\n\n사용법: `[email=이메일 주소]표시 텍스트[/email]`",
         },
@@ -249,7 +249,7 @@ https://sisy.s-ul.eu/UWlCIYOX
 18 70 12 28 https://osu.ppy.sh/users/9650376 Robinia
 [/imagemap]
 
-이메일 링크: [email=test@gmail.com]Sisy의 이메일[/email]
+이메일 링크: [email=test{'@'}gmail.com]Sisy의 이메일[/email]
 
 오디오 임베드:
 
@@ -274,12 +274,12 @@ YouTube 동영상 임베드:
 코드 블록 예제:
 
 [code]
-function clickCircles() {
+function clickCircles() {'{'}
     const timing = calculateTiming();
-    if (timing.perfect) {
+    if (timing.perfect) {'{'}
         score += 300;
-    }
-}
+    {'}'}
+{'}'}
 [/code]
 
 인라인 코드: 디버깅을 위해 [c]console.log()[/c]를 사용하거나 [c]beatmap.difficulty[/c] 속성을 확인하세요.

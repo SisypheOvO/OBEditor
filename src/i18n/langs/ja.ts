@@ -184,7 +184,7 @@ export const ja = {
         email: {
             label: "メール",
             placeholder: "Sisy",
-            documentation: "**メール** - メールリンク\n\nブラウザのmailto機能を起動するメールリンクを作成します\n\n例: `[email=test@gmail.com]メール名[/email]`",
+            documentation: "**メール** - メールリンク\n\nブラウザのmailto機能を起動するメールリンクを作成します\n\n例: `[email=test{'@'}gmail.com]メール名[/email]`",
             detail: "osu! メールタグ",
             hoverInfo: "**メールタグ** - メールリンク\n\n使用法: `[email=メールアドレス]表示テキスト[/email]`",
         },
@@ -249,7 +249,7 @@ https://sisy.s-ul.eu/UWlCIYOX
 18 70 12 28 https://osu.ppy.sh/users/9650376 Robinia
 [/imagemap]
 
-メールリンク：[email=test@gmail.com]Sisyのメール[/email]
+メールリンク：[email=test{'@'}gmail.com]Sisyのメール[/email]
 
 オーディオを埋め込む：
 
@@ -274,12 +274,12 @@ YouTube動画を埋め込む：
 コードブロックの例：
 
 [code]
-function clickCircles() {
+function clickCircles() {'{'}
     const timing = calculateTiming();
-    if (timing.perfect) {
+    if (timing.perfect) {'{'}
         score += 300;
-    }
-}
+    {'}'}
+{'}'}
 [/code]
 
 インラインコード：デバッグには [c]console.log()[/c] を使用するか、[c]beatmap.difficulty[/c] プロパティを確認してください。

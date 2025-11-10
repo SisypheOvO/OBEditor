@@ -184,7 +184,7 @@ export const ru = {
         email: {
             label: "Email",
             placeholder: "Sisy",
-            documentation: "**Email** - Ссылка на email\n\nСоздать ссылку на email, которая запускает функцию mailto браузера\n\nПример: `[email=test@gmail.com]Имя email[/email]`",
+            documentation: "**Email** - Ссылка на email\n\nСоздать ссылку на email, которая запускает функцию mailto браузера\n\nПример: `[email=test{'@'}gmail.com]Имя email[/email]`",
             detail: "osu! тег email",
             hoverInfo: "**Тег email** - Ссылка на email\n\nИспользование: `[email=адрес email]отображаемый текст[/email]`",
         },
@@ -249,7 +249,7 @@ https://sisy.s-ul.eu/UWlCIYOX
 18 70 12 28 https://osu.ppy.sh/users/9650376 Robinia
 [/imagemap]
 
-Ссылка на email: [email=test@gmail.com]Email Sisy[/email]
+Ссылка на email: [email=test{'@'}gmail.com]Email Sisy[/email]
 
 Встроить аудио:
 
@@ -274,12 +274,12 @@ https://sisy.s-ul.eu/UWlCIYOX
 Пример блока кода:
 
 [code]
-function clickCircles() {
+function clickCircles() {'{'}
     const timing = calculateTiming();
-    if (timing.perfect) {
+    if (timing.perfect) {'{'}
         score += 300;
-    }
-}
+    {'}'}
+{'}'}
 [/code]
 
 Встроенный код: Используйте [c]console.log()[/c] для отладки, или проверьте свойство [c]beatmap.difficulty[/c].

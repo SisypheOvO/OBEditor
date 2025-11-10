@@ -37,5 +37,8 @@ export const ja = {
         loadErrorDesc: "プロフィール情報のインポート中にエラーが発生しました。ネットワーク接続を確認して、もう一度お試しください。",
         retry: "再試行",
     },
+    preview: {
+        realtimePreview: "リアルタイムプレビュー",
+    },
     // Add more translations as needed
 }

@@ -37,5 +37,8 @@ export const kr = {
         loadErrorDesc: "프로필 정보를 불러오는 중 오류가 발생했습니다. 네트워크 연결을 확인하고 다시 시도해 주세요.",
         retry: "다시 시도",
     },
+    preview: {
+        realtimePreview: "실시간 미리보기",
+    },
     // Add more translations as needed
 }

@@ -81,8 +81,9 @@
 - [ ] i18n 支持
   - [x] Drawer
   - [x] statusbar
-  - [ ] Toolbar
+  - [x] Toolbar
   - [x] OAuth Dropdown
+  - [x] Preview 组件内的提示文字
   - [ ] Editor 悬浮提示
   - [ ] Default contents
 - [x] 获取 userdata 时头像显示 loading

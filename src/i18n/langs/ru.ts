@@ -37,5 +37,8 @@ export const ru = {
         loadErrorDesc: "Произошла ошибка при загрузке информации профиля. Проверьте подключение к сети и попробуйте снова.",
         retry: "Повторить",
     },
+    preview: {
+        realtimePreview: "Предварительный просмотр в реальном времени",
+    },
     // Add more translations as needed
 }

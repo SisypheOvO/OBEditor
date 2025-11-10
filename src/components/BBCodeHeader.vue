@@ -4,11 +4,15 @@
 -->
 <template>
     <div class="flex items-center justify-between pl-5 pr-3 py-2 border-b border-[#3c3c3c] bg-[#22242a] rounded-sm">
-        <h3 class="m-0 text-sm font-semibold text-[#cccccc]">实时预览</h3>
+        <h3 class="m-0 text-sm font-semibold text-[#cccccc]">{{ t("preview.realtimePreview") }}</h3>
     </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
 const emit = defineEmits<{
     refresh: []
 }>()

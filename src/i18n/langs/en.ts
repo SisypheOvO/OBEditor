@@ -37,5 +37,15 @@ export const en = {
         loadErrorDesc: "There was an error loading your profile information. Please check your network connection and try again.",
         retry: "Retry",
     },
+    toolbar: {
+        format: "format",
+        media: "media",
+        layout: "layout",
+        special: "special",
+        osu: "osu!",
+    },
+    preview: {
+        realtimePreview: "Realtime Preview",
+    },
     // Add more translations as needed
 }

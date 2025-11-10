@@ -37,5 +37,15 @@ export const zhTW = {
         loadErrorDesc: "載入您的個人資料資訊時發生錯誤。請檢查網路連線並重試。",
         retry: "重試",
     },
+    toolbar: {
+        format: "格式",
+        media: "媒體",
+        layout: "佈局",
+        special: "特殊",
+        osu: "osu!",
+    },
+    preview: {
+        realtimePreview: "即時預覽",
+    },
     // Add more translations as needed
 }

@@ -37,5 +37,15 @@ export const zh = {
         loadErrorDesc: "加载您的个人资料信息时出错。请检查网络连接并重试。",
         retry: "重试",
     },
+    toolbar: {
+        format: "格式",
+        media: "媒体",
+        layout: "布局",
+        special: "特殊",
+        osu: "osu!",
+    },
+    preview: {
+        realtimePreview: "实时预览",
+    },
     // Add more translations as needed
 }

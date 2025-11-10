@@ -52,6 +52,7 @@
 import { computed } from "vue"
 import type { BBCodeTag } from "@/config/bbcodeTags"
 import OAuthButton from "@/components/OAuthButton.vue"
+import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
     tags: BBCodeTag[]
@@ -64,25 +65,27 @@ defineEmits<{
     "toggle-drawer": []
 }>()
 
+const { t } = useI18n()
+
 const buttonClass = "flex items-center justify-center w-7 h-7 border-0 bg-transparent text-[#cccccc] rounded cursor-pointer transition-all duration-200 hover:bg-[#3c3c3c] hover:text-white active:bg-[#505050] active:scale-95 text-sm"
 
 const dividerClass = "w-0.5 h-6 bg-[#4a4a4a] hidden md:block rounded-full"
 
-const categoryConfig = [
-    { name: "format", label: "格式" },
-    { name: "media", label: "媒体" },
-    { name: "layout", label: "布局" },
-    { name: "special", label: "特殊" },
-    { name: "osu", label: "osu!" },
-] as const
-
 // 动态分组标签
-const categories = computed(() =>
-    categoryConfig.map((config) => ({
+const categories = computed(() => {
+    const categoryConfig = [
+        { name: "format", label: t("toolbar.format") },
+        { name: "media", label: t("toolbar.media") },
+        { name: "layout", label: t("toolbar.layout") },
+        { name: "special", label: t("toolbar.special") },
+        { name: "osu", label: t("toolbar.osu") },
+    ] as const
+
+    return categoryConfig.map((config) => ({
         ...config,
-        tags: props.tags.filter((t) => t.category === config.name),
+        tags: props.tags.filter((tag) => tag.category === config.name),
     }))
-)
+})
 
 const getTagTitle = (tag: BBCodeTag) => {
     return tag.shortcut ? `${tag.label} (${tag.shortcut})` : tag.label

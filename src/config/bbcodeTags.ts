@@ -253,9 +253,3 @@ export const bbcodeTagsConfig: BBCodeTagConfig[] = [
         sortOrder: 6,
     },
 ]
-
-/**
- * 旧版 bbcodeTags 数组（为了向后兼容，已弃用）
- * @deprecated 请使用 getTranslatedBBCodeTags(t) 获取翻译后的标签
- */
-export const bbcodeTags: BBCodeTag[] = []

@@ -1,5 +1,5 @@
 <template>
-    <div class="flex items-center gap-3 pl-2 pr-4 py-1.5 bg-[#2d2d2d] border-b border-[#3c3c3c] flex-wrap">
+    <div class="flex items-center gap-2.5 pl-2 pr-4 py-1.5 bg-[#2d2d2d] border-b border-[#3c3c3c] flex-wrap">
         <button
             class="inline-flex items-center justify-center relative shrink-0 can-focus select-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none disabled:drop-shadow-none border-transparent transition font-base duration-300 ease-[cubic-bezier(0.165,0.85,0.45,1)] h-8 w-8 rounded-md active:scale-95 group bg-transparent hover:bg-[hsl(60,3%,14%)] text-[#8e8d86]"
             type="button"

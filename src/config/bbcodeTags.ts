@@ -18,6 +18,22 @@ export interface BBCodeTag {
 }
 
 /**
+ * BBCode 标签配置（使用 i18n 键）
+ */
+export interface BBCodeTagConfig {
+    // 工具栏显示
+    i18nKey: string // i18n 翻译键，如 "bold", "italic"
+    icon: string // 图标
+    category?: "format" | "media" | "layout" | "special" | "osu" // 分类所属
+    shortcut?: string // 键盘快捷键
+
+    // BBCode 标签定义
+    tag: string // 标签名称，如 "b" 或 "url=https://example.com"
+    hasClosingTag?: boolean // 是否有闭合标签，默认 true
+    sortOrder?: number // 补全列表中的排序优先级 (0-9, 越小越靠前)
+}
+
+/**
  * 从标签定义中提取纯标签名（不含参数）
  * 例如: "url=https://example.com" -> "url"
  */
@@ -25,270 +41,221 @@ export function getTagName(tag: string): string {
     return tag.split("=")[0]
 }
 
-export const bbcodeTags: BBCodeTag[] = [
+/**
+ * 将 BBCodeTagConfig 转换为 BBCodeTag（应用 i18n 翻译）
+ * @param config BBCode 标签配置
+ * @param t i18n 翻译函数
+ * @returns 翻译后的 BBCodeTag
+ */
+export function translateBBCodeTag(config: BBCodeTagConfig, t: (key: string) => string): BBCodeTag {
+    const i18nBase = `bbcode.${config.i18nKey}`
+
+    return {
+        label: t(`${i18nBase}.label`),
+        icon: config.icon,
+        category: config.category,
+        shortcut: config.shortcut,
+        tag: config.tag,
+        placeholder: t(`${i18nBase}.placeholder`),
+        hasClosingTag: config.hasClosingTag,
+        documentation: t(`${i18nBase}.documentation`),
+        detail: t(`${i18nBase}.detail`),
+        hoverInfo: t(`${i18nBase}.hoverInfo`),
+        sortOrder: config.sortOrder,
+    }
+}
+
+/**
+ * 获取所有翻译后的 BBCode 标签
+ * @param t i18n 翻译函数
+ * @returns 翻译后的 BBCode 标签数组
+ */
+export function getTranslatedBBCodeTags(t: (key: string) => string): BBCodeTag[] {
+    return bbcodeTagsConfig.map((config) => translateBBCodeTag(config, t))
+}
+
+/**
+ * BBCode 标签配置数组（使用 i18n 键）
+ */
+export const bbcodeTagsConfig: BBCodeTagConfig[] = [
+    // 格式标签
     {
-        label: "粗体",
+        i18nKey: "bold",
         tag: "b",
-        placeholder: "文本",
         icon: "fas fa-bold",
         shortcut: "Ctrl+B",
         category: "format",
-        documentation: "**粗体** - 使文本加粗显示",
-        detail: "BBCode 粗体标签",
-        hoverInfo: "**粗体标签** - 使文本加粗显示\n\n用法: `[b]文本[/b]`",
         sortOrder: 0,
     },
     {
-        label: "斜体",
+        i18nKey: "italic",
         tag: "i",
-        placeholder: "文本",
         icon: "fas fa-italic",
         shortcut: "Ctrl+I",
         category: "format",
-        documentation: "**斜体** - 使文本斜体显示",
-        detail: "BBCode 斜体标签",
-        hoverInfo: "**斜体标签** - 使文本斜体显示\n\n用法: `[i]文本[/i]`",
         sortOrder: 0,
     },
     {
-        label: "下划线",
+        i18nKey: "underline",
         tag: "u",
-        placeholder: "文本",
         icon: "fas fa-underline",
         shortcut: "Ctrl+U",
         category: "format",
-        documentation: "**下划线** - 为文本添加下划线",
-        detail: "BBCode 下划线标签",
-        hoverInfo: "**下划线标签** - 为文本添加下划线\n\n用法: `[u]文本[/u]`",
         sortOrder: 0,
     },
     {
-        label: "删除线",
+        i18nKey: "strikethrough",
         tag: "s",
-        placeholder: "文本",
         icon: "fas fa-strikethrough",
         category: "format",
-        documentation: "**删除线** - 为文本添加删除线",
-        detail: "BBCode 删除线标签",
-        hoverInfo: "**删除线标签** - 为文本添加删除线\n\n用法: `[s]文本[/s]`",
         sortOrder: 0,
     },
     {
-        label: "颜色",
+        i18nKey: "color",
         tag: "color=#ff0000",
-        placeholder: "文本",
         icon: "fas fa-palette",
         category: "format",
-        documentation: "**文字颜色** - 设置文字颜色\n\n示例: `[color=#ff0000]红色文字[/color]`",
-        detail: "BBCode 颜色标签",
-        hoverInfo: "**颜色标签** - 设置文字颜色\n\n用法: `[color=#ff0000]文本[/color]`",
         sortOrder: 3,
     },
     {
-        label: "大小",
+        i18nKey: "size",
         tag: "size=100",
-        placeholder: "文本",
         icon: "fas fa-text-height",
         category: "format",
-        documentation: "**文字大小** - 设置文字大小（百分比）\n\n示例: `[size=150]大号文字[/size]`",
-        detail: "BBCode 大小标签",
-        hoverInfo: "**大小标签** - 设置文字大小\n\n用法: `[size=100]文本[/size]`\n\n提示：只支持50, 85, 100, 150。100 为正常大小，150 为 1.5 倍",
         sortOrder: 3,
     },
 
     // 媒体标签
     {
-        label: "链接",
+        i18nKey: "url",
         tag: "url=https://example.com",
-        placeholder: "链接文本",
         icon: "fas fa-link",
         shortcut: "Ctrl+K",
         category: "media",
-        documentation: "**超链接** - 创建可点击的链接\n\n示例: `[url=https://osu.ppy.sh]访问 osu![/url]`",
-        detail: "BBCode 链接标签",
-        hoverInfo: "**链接标签** - 创建超链接\n\n用法: `[url=地址]文本[/url]`",
         sortOrder: 1,
     },
     {
-        label: "图片",
+        i18nKey: "img",
         tag: "img",
-        placeholder: "https://example.com/image.jpg",
         icon: "fas fa-image",
         category: "media",
-        documentation: "**图片** - 插入图片\n\n示例: `[img]https://example.com/logo.png[/img]`",
-        detail: "BBCode 图片标签",
-        hoverInfo: "**图片标签** - 插入图片\n\n用法: `[img]图片地址[/img]`",
         sortOrder: 1,
     },
 
     // 布局标签
     {
-        label: "居中",
+        i18nKey: "centre",
         tag: "centre",
-        placeholder: "居中文本",
         icon: "fas fa-align-center",
         category: "layout",
-        documentation: "**居中对齐** - 使文本居中显示",
-        detail: "BBCode 居中标签",
-        hoverInfo: "**居中标签** - 文本居中对齐\n\n用法: `[centre]文本[/centre]`",
         sortOrder: 5,
     },
 
     // 特殊标签
     {
-        label: "代码块",
+        i18nKey: "code",
         tag: "code",
-        placeholder: "\n// 代码内容\n",
         icon: "fas fa-code",
         category: "special",
-        documentation: "**代码块** - 显示格式化的代码\n\n用于展示编程代码",
-        detail: "BBCode 代码块标签",
-        hoverInfo: "**代码块标签** - 显示代码块\n\n用法: `[code]代码[/code]`",
         sortOrder: 2,
     },
     {
-        label: "行内代码",
+        i18nKey: "inlineCode",
         tag: "c",
-        placeholder: "代码内容",
         icon: "fas fa-terminal",
         category: "special",
-        documentation: "**行内代码** - 显示行内代码\n\n用于展示编程代码",
-        detail: "BBCode 行内代码标签",
-        hoverInfo: "**行内代码标签** - 显示行内代码\n\n用法: `[c]代码[/c]`",
         sortOrder: 2,
     },
     {
-        label: "引用",
+        i18nKey: "quote",
         tag: "quote",
-        placeholder: "引用内容",
         icon: "fas fa-quote-right",
         category: "special",
-        documentation: "**引用块** - 引用他人的话\n\n常用于回复或引述\n\n可选语法: `[quote=作者]内容[/quote]`",
-        detail: "BBCode 引用标签",
-        hoverInfo: "**引用标签** - 显示引用内容\n\n用法: `[quote]引用文本[/quote]`\n或: `[quote=作者]引用文本[/quote]`",
         sortOrder: 2,
     },
     {
-        label: "列表",
+        i18nKey: "list",
         tag: "list",
-        placeholder: "[*]项目1\n[*]项目2\n[*]项目3",
         icon: "fas fa-list",
         category: "special",
-        documentation: "**列表** - 创建列表\n\n使用 `[*]` 表示列表项\n\n• `[list]` - 创建无序列表（项目符号）\n• `[list=TYPE]` - 创建有序列表（编号）",
-        detail: "BBCode 列表标签",
-        hoverInfo: "**列表标签** - 创建列表\n\n无序列表: `[list][*]项目1[*]项目2[/list]`\n\n有序列表(TYPE可以为任意值): `[list=TYPE][*]项目1[*]项目2[/list]`",
         sortOrder: 4,
     },
     {
-        label: "隐藏",
+        i18nKey: "spoiler",
         tag: "spoiler",
-        placeholder: "隐藏内容",
         icon: "fas fa-eye-slash",
         category: "special",
-        documentation: "**隐藏内容** - 创建需要点击才能查看的内容\n\n常用于剧透警告",
-        detail: "BBCode 隐藏标签",
-        hoverInfo: "**隐藏标签** - 隐藏敏感内容\n\n用法: `[spoiler]隐藏的文本[/spoiler]`",
         sortOrder: 4,
     },
 
     // osu! 特有标签
     {
-        label: "标题",
+        i18nKey: "heading",
         tag: "heading",
-        placeholder: "标题文本",
         icon: "fas fa-heading",
         category: "osu",
-        documentation: "**标题** - osu! 论坛专用标题样式\n\n创建醒目的章节标题",
-        detail: "osu! 标题标签",
-        hoverInfo: "**标题标签** - osu! 论坛标题样式\n\n用法: `[heading]标题[/heading]`",
         sortOrder: 6,
     },
     {
-        label: "提示框",
+        i18nKey: "notice",
         tag: "notice",
-        placeholder: "提示内容",
         icon: "fas fa-exclamation-triangle",
         category: "osu",
-        documentation: "**提示框** - osu! 论坛专用提示框\n\n显示重要提示或警告信息",
-        detail: "osu! 提示框标签",
-        hoverInfo: "**提示框标签** - osu! 论坛提示框\n\n用法: `[notice]提示内容[/notice]`",
         sortOrder: 6,
     },
     {
-        label: "折叠框",
+        i18nKey: "box",
         tag: "box=展开查看",
-        placeholder: "折叠的内容",
         icon: "fas fa-box",
         category: "osu",
-        documentation: "**折叠框** - osu! 论坛专用折叠框\n\n创建可展开/收起的内容区域\n\n示例: `[box=点击展开]内容[/box]`",
-        detail: "osu! 折叠框标签",
-        hoverInfo: "**折叠框标签** - osu! 论坛折叠框\n\n用法: `[box=标题]内容[/box]`",
         sortOrder: 6,
     },
     {
-        label: "用户",
+        i18nKey: "profile",
         tag: "profile=123456",
-        placeholder: "用户名",
         icon: "fas fa-user",
         category: "osu",
-        documentation: "**用户链接** - osu! 论坛用户资料链接\n\n创建指向用户主页的链接\n\n示例: `[profile=2]peppy[/profile]`",
-        detail: "osu! 用户标签",
-        hoverInfo: "**用户标签** - osu! 用户资料链接\n\n用法: `[profile=用户ID]用户名[/profile]`",
         sortOrder: 6,
     },
     {
-        label: "剧透框",
+        i18nKey: "spoilerbox",
         tag: "spoilerbox",
-        placeholder: "剧透内容",
         icon: "fas fa-search",
         category: "special",
-        documentation: "**剧透框** - osu! 论坛专用剧透框\n\n创建固定标题为 SPOILER 的折叠框\n\n示例: `[spoilerbox]剧透内容[/spoilerbox]`",
-        detail: "osu! 剧透框标签",
-        hoverInfo: "**剧透框标签** - osu! 论坛剧透框\n\n用法: `[spoilerbox]内容[/spoilerbox]`\n\n剧透框的标题固定为 SPOILER",
         sortOrder: 6,
     },
     {
-        label: "邮箱",
+        i18nKey: "email",
         tag: "email=test@gmail.com",
-        placeholder: "Sisy",
         icon: "fas fa-envelope",
         category: "media",
-        documentation: "**邮箱** - 邮箱链接\n\n创建触发浏览器mailto功能的邮箱链接\n\n示例: `[email=test@gmail.com]Your email name[/email]`",
-        detail: "osu! 邮箱标签",
-        hoverInfo: "**邮箱标签** - 邮箱链接\n\n用法: `[email=邮箱地址]显示内容[/email]`",
         sortOrder: 6,
     },
     {
-        label: "YouTube",
+        i18nKey: "youtube",
         tag: "youtube",
-        placeholder: "",
         icon: "fab fa-youtube",
         category: "media",
-        documentation: "**YouTube** - youtube视频\n\n用于嵌入 YouTube 视频\n\n示例: `[youtube]Ef6zwIR44Ww[/youtube]`",
-        detail: "osu! YouTube 标签",
-        hoverInfo: "**YouTube 标签** - youtube视频\n\n用法: `[youtube]视频ID[/youtube]`",
         sortOrder: 6,
     },
     {
-        label: "音频",
+        i18nKey: "audio",
         tag: "audio",
-        placeholder: "",
         icon: "fas fa-music",
         category: "media",
-        documentation: "**音频** - 音频\n\n用于嵌入可播放的音频\n\n示例: `[audio]https://example.com/audiofile[/audio]`",
-        detail: "osu! 音频 标签",
-        hoverInfo: "**音频 标签** - 音频\n\n用法: `[audio]音频URL（须对osu可用）[/audio]`",
         sortOrder: 6,
     },
     {
-        label: "Imagemap",
+        i18nKey: "imagemap",
         tag: "imagemap",
-        placeholder: "",
         icon: "fas fa-map-marked-alt",
         category: "media",
-        documentation: "**Imagemap** - Imagemap\n\n用于添加各个分区可跳转的图片\n\n示例: `[imagemap]https://test.com/example.jpg\n\n45 16 25 7 https://osu.ppy.sh/users/21242012\n\n70 8 30 7 https://osu.ppy.sh/users/27608705\n\n0 16 20 7 https://osu.ppy.sh/users/9650376\n\n22 12 20 7 https://osu.ppy.sh/users/35628968[/imagemap]`",
-        detail: "osu! Imagemap 标签",
-        hoverInfo: "**Imagemap 标签** - Imagemap\n\n用法: \n\n[imagemap]\n\nhttps://test.com/example.jpg\n\n45 16 25 7 https://osu.ppy.sh/users/1\n\n70 8 30 7 https://osu.ppy.sh/users/2\n\n0 16 20 7 https://osu.ppy.sh/users/3\n\n22 12 20 7 https://osu.ppy.sh/users/4\n\n[/imagemap]",
         sortOrder: 6,
     },
 ]
+
+/**
+ * 旧版 bbcodeTags 数组（为了向后兼容，已弃用）
+ * @deprecated 请使用 getTranslatedBBCodeTags(t) 获取翻译后的标签
+ */
+export const bbcodeTags: BBCodeTag[] = []

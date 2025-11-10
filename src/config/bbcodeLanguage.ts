@@ -1,8 +1,29 @@
 import type * as monaco from "monaco-editor"
-import { bbcodeTags, getTagName } from "./bbcodeTags"
+import { type BBCodeTag, getTagName } from "./bbcodeTags"
 import { availableThemes, createMonacoTheme } from "./monacoThemes"
 
-export const registerBBCodeLanguage = (monaco: typeof import("monaco-editor")) => {
+// Store translated tags for use in completion and hover providers
+let translatedTags: BBCodeTag[] = []
+let isLanguageRegistered = false
+
+/**
+ * 更新翻译后的标签（用于语言切换）
+ */
+export const updateBBCodeTranslations = (bbcodeTags: BBCodeTag[]) => {
+    translatedTags = bbcodeTags
+}
+
+export const registerBBCodeLanguage = (monaco: typeof import("monaco-editor"), bbcodeTags: BBCodeTag[]) => {
+    // Store the translated tags for use in providers
+    translatedTags = bbcodeTags
+
+    // 如果已经注册过，只更新翻译即可
+    if (isLanguageRegistered) {
+        return
+    }
+
+    isLanguageRegistered = true
+
     // 注册语言
     monaco.languages.register({ id: "bbcode" })
 
@@ -263,7 +284,7 @@ export const registerBBCodeLanguage = (monaco: typeof import("monaco-editor")) =
 // 创建补全建议 - 从 bbcodeTags 自动生成
 const createCompletionSuggestions = (monaco: typeof import("monaco-editor"), range: monaco.IRange, filter: string): monaco.languages.CompletionItem[] => {
     // 从统一的数据源生成补全建议
-    const allSuggestions: monaco.languages.CompletionItem[] = bbcodeTags.map((tag) => {
+    const allSuggestions: monaco.languages.CompletionItem[] = translatedTags.map((tag) => {
         const tagName = getTagName(tag.tag)
         const hasClosingTag = tag.hasClosingTag !== false // 默认为 true
 
@@ -306,7 +327,7 @@ const createCompletionSuggestions = (monaco: typeof import("monaco-editor"), ran
 // 获取悬停信息 - 从 bbcodeTags 自动生成
 const getHoverInfo = (word: string): string | null => {
     // 从统一的数据源查找悬停信息
-    const tag = bbcodeTags.find((t) => getTagName(t.tag).toLowerCase() === word.toLowerCase())
+    const tag = translatedTags.find((t) => getTagName(t.tag).toLowerCase() === word.toLowerCase())
     return tag ? tag.hoverInfo : null
 }
 

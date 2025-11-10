@@ -5,7 +5,8 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, computed } from "vue"
 import * as monaco from "monaco-editor"
-import { registerBBCodeLanguage } from "@/config/bbcodeLanguage"
+import { registerBBCodeLanguage, updateBBCodeTranslations } from "@/config/bbcodeLanguage"
+import { type BBCodeTag } from "@/config/bbcodeTags"
 import { useThemeStore } from "@/stores/theme"
 
 const props = defineProps<{
@@ -13,6 +14,7 @@ const props = defineProps<{
     language?: string
     theme?: string
     options?: monaco.editor.IStandaloneEditorConstructionOptions
+    bbcodeTags?: BBCodeTag[]
 }>()
 
 const emit = defineEmits<{
@@ -36,7 +38,9 @@ const initEditor = async () => {
     if (!editorContainer.value) return
 
     // 注册 BBCode 语言
-    registerBBCodeLanguage(monaco)
+    if (props.bbcodeTags) {
+        registerBBCodeLanguage(monaco, props.bbcodeTags)
+    }
 
     editor = monaco.editor.create(editorContainer.value, {
         value: props.modelValue,
@@ -93,6 +97,18 @@ watch(currentTheme, (newTheme) => {
         monaco.editor.setTheme(newTheme)
     }
 })
+
+// 监听 bbcodeTags 变化（语言切换时更新）
+watch(
+    () => props.bbcodeTags,
+    (newTags) => {
+        if (newTags && newTags.length > 0) {
+            // 只更新翻译，不重复注册语言
+            updateBBCodeTranslations(newTags)
+        }
+    },
+    { deep: true }
+)
 
 // 生命周期
 onMounted(() => {

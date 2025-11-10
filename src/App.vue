@@ -10,7 +10,7 @@
                 <div class="h-[21px] px-2 flex flex-col justify-center">
                     <span v-if="isAuthenticated && userData" class="text-[10px] text-[#9c8dcf]">https://osu.ppy.sh/users/{{ userData.id }}</span>
                 </div>
-                <MonacoEditor ref="editorRef" v-model="content" :options="editorOptions" @editor-mounted="handleEditorMounted" />
+                <MonacoEditor ref="editorRef" v-model="content" :options="editorOptions" :bbcode-tags="bbcodeTags" @editor-mounted="handleEditorMounted" />
             </pane>
 
             <Transition name="preview-fade">
@@ -27,19 +27,22 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from "vue"
 import { storeToRefs } from "pinia"
+import { useI18n } from "vue-i18n"
 import MonacoEditor from "./components/MonacoEditor.vue"
 import EditorToolbar from "./components/EditorToolbar.vue"
 import BBCodePreview from "./components/BBCodePreview.vue"
 import EditorStatusBar from "./components/EditorStatusBar.vue"
 import Drawer from "./components/Drawer.vue"
 import * as monaco from "monaco-editor"
-import { bbcodeTags, type BBCodeTag } from "./config/bbcodeTags"
+import { getTranslatedBBCodeTags, type BBCodeTag } from "./config/bbcodeTags"
 import { defaultContent } from "./config/defaultContent"
 import { Splitpanes, Pane } from "splitpanes"
 import { useAuthStore } from "@/stores/auth"
 import { useContentsStore } from "@/stores/contents"
 import { useThemeStore } from "@/stores/theme"
 import "splitpanes/dist/splitpanes.css"
+
+const { t } = useI18n()
 
 const authStore = useAuthStore()
 const { isAuthenticated, userData } = storeToRefs(authStore)
@@ -52,6 +55,9 @@ onMounted(() => {
     contentsStore.initialize()
     themeStore.initialize()
 })
+
+// Get translated BBCode tags
+const bbcodeTags = computed(() => getTranslatedBBCodeTags(t))
 
 // Use computed with getter/setter for two-way binding with store
 const content = computed({
@@ -178,7 +184,7 @@ const handleInsertTag = (tag: BBCodeTag) => {
 
 // 根据标签名插入
 const insertTagByName = (tagName: string) => {
-    const tag = bbcodeTags.find((t) => t.tag.startsWith(tagName))
+    const tag = bbcodeTags.value.find((t) => t.tag.startsWith(tagName))
     if (tag) {
         handleInsertTag(tag)
     }

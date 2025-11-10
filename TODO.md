@@ -84,7 +84,7 @@
   - [x] Toolbar
   - [x] OAuth Dropdown
   - [x] Preview 组件内的提示文字
-  - [ ] Editor 悬浮提示
+  - [x] All BBCodeTags (label, placeholder, detail, documentation and hover info)
   - [ ] Default contents
 - [x] 获取 userdata 时头像显示 loading
 - [ ] 优化 userCard 组件
@@ -130,6 +130,7 @@
   - [x] centre标签的颜色有点太蓝了，和box之类混在一起但又不清晰
   - [x] 只有一个内容时不让编辑
   - [x] content按照事件排序
+  - [x] i18n zh-TW 选择后错误导向到 zh
 
 - [ ] 修复编辑器功能问题:
   - [x] 修复编辑器url到上括号的渲染问题

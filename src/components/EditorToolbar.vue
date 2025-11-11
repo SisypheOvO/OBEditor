@@ -32,16 +32,19 @@
                 <template v-for="(category, index) in categories" :key="category.name">
                     <div class="flex items-center gap-1 pl-3 pr-1 py-1 bg-[#363636] rounded border border-[#454545] shrink-0">
                         <span class="text-xs text-[#a8a8a8] mr-1.5 font-semibold">{{ category.label }}</span>
-                        <button v-for="tag in category.tags" :key="tag.tag" :class="buttonClass" :title="getTagTitle(tag)" @click="$emit('insert-tag', tag)">
-                            <i :class="tag.icon"></i>
-                        </button>
+                        <template v-for="tag in category.tags" :key="tag.tag">
+                            <SizeSelector v-if="tag.tag.startsWith('size=')" :button-class="buttonClass" @select="handleSizeSelect" />
+                            <button v-else :class="buttonClass" :title="getTagTitle(tag)" @click="$emit('insert-tag', tag)">
+                                <i :class="tag.icon"></i>
+                            </button>
+                        </template>
                     </div>
 
                     <div v-if="index < categories.length - 1" :class="dividerClass"></div>
                 </template>
             </div>
-            <div class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-[#2d2d2d] to-transparent pointer-events-none transition-opacity duration-200" :class="showLeftFade ? 'opacity-100' : 'opacity-0'"></div>
-            <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#2d2d2d] to-transparent pointer-events-none transition-opacity duration-200" :class="showRightFade ? 'opacity-100' : 'opacity-0'"></div>
+            <div class="absolute left-0 top-0 bottom-0 w-8 bg-linear-to-r from-[#2d2d2d] to-transparent pointer-events-none transition-opacity duration-200" :class="showLeftFade ? 'opacity-100' : 'opacity-0'"></div>
+            <div class="absolute right-0 top-0 bottom-0 w-8 bg-linear-to-l from-[#2d2d2d] to-transparent pointer-events-none transition-opacity duration-200" :class="showRightFade ? 'opacity-100' : 'opacity-0'"></div>
         </div>
 
         <div class="flex-1 md:flex-[0_0_0px] transition-all duration-300"></div>
@@ -58,6 +61,7 @@
 import { computed, ref, onMounted, onUnmounted, nextTick } from "vue"
 import type { BBCodeTag } from "@/config/bbcodeTags"
 import OAuthButton from "@/components/OAuthButton.vue"
+import SizeSelector from "@/components/SizeSelector.vue"
 import { useI18n } from "vue-i18n"
 
 const props = defineProps<{
@@ -65,7 +69,7 @@ const props = defineProps<{
     showPreview?: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
     "insert-tag": [tag: BBCodeTag]
     "toggle-preview": []
     "toggle-drawer": []
@@ -95,6 +99,18 @@ const categories = computed(() => {
 
 const getTagTitle = (tag: BBCodeTag) => {
     return tag.shortcut ? `${tag.label} (${tag.shortcut})` : tag.label
+}
+
+const handleSizeSelect = (size: number) => {
+    const sizeTag = props.tags.find((tag) => tag.tag.startsWith("size="))
+    if (!sizeTag) return
+
+    const customTag: BBCodeTag = {
+        ...sizeTag,
+        tag: `size=${size}`,
+    }
+
+    emit("insert-tag", customTag)
 }
 
 // 滚动相关

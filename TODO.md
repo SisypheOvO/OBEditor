@@ -50,7 +50,7 @@
 - [x] 支持编辑器和预览的宽度调整
   - [x] 支持宽度记忆
 - [x] 优化预览渲染性能（尝试局部渲染）（我认为这会导致渲染错误，放弃）
-- [ ] 支持size的快捷选项
+- [x] 支持size的快捷选项
 - [ ] 如果可能，添加左右同步滚动功能
 - [x] 支持 Oauth 认证
   - [x] 用环境变量引入各变量（clientId, redirectUri, proxyUri等）
@@ -87,17 +87,18 @@
   - [x] All BBCodeTags (label, placeholder, detail, documentation and hover info)
   - [x] Default contents
 - [x] 获取 userdata 时头像显示 loading
-- [ ] 优化 userCard 组件
-  - [ ] 添加 loading 状态
-  - [ ] 优化封面和头像加载逻辑，添加过渡动画
+- [x] 优化 userCard 组件
+  - [x] 添加 loading 状态
+  - [x] 优化封面和头像加载逻辑，添加过渡动画
+  - [x] 实现状态机
 - [ ] 移动端适配
   - [x] Drawer
   - [ ] Toolbar
   - [ ] OAuth Dropdown
   - [ ] 左右视窗改为编辑与预览来回切换
   - [ ] 在Edge移动端，底部被遮挡。。。
-  - [ ] 在三星默认浏览器，浏览器的底部工具栏会导致Drawer下的主内容可以在Drawer显示时滚动且Drawer不会在工具栏变化高度时重算高度导致白边。。。
-  - [ ] toolbar左右滚动
+  - [x] 在三星默认浏览器，浏览器的底部工具栏会导致Drawer下的主内容可以在Drawer显示时滚动且Drawer不会在工具栏变化高度时重算高度导致白边。。。
+  - [x] toolbar左右滚动
 - [ ] 尝试阅读osu-web源码，寻找有无更强可用性的解析bbcode、渲染方案（防止未预测的情况下渲染结果与官方不同）
 - [ ] 尝试在profile的基础上兼容forum、beatmap description、team description
 - [ ] 尝试添加多种模式：
@@ -132,7 +133,7 @@
   - [x] 只有一个内容时不让编辑
   - [x] content按照事件排序
   - [x] i18n zh-TW 选择后错误导向到 zh
-  - [ ] 字体在drawer显示时才加载
+  - [x] 字体在drawer显示时才加载
 
 - [ ] 修复编辑器功能问题:
   - [x] 修复编辑器url到上括号的渲染问题

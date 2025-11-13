@@ -4,7 +4,7 @@
 
         <EditorToolbar v-if="showToolbar" :tags="bbcodeTags" :show-preview="showPreview" @insert-tag="handleInsertTag" @toggle-preview="togglePreview" @toggle-drawer="isDrawerOpen = !isDrawerOpen" />
 
-        <splitpanes class="flex flex-1 overflow-hidden" :class="isMobile ? 'mobile': 'pc'" @resized="storePaneSize">
+        <splitpanes class="flex flex-1 overflow-hidden" :class="isMobile ? 'mobile' : 'pc'" @resized="storePaneSize">
             <Transition name="code-fade">
                 <pane v-show="!isMobile || !showPreview" class="editor flex flex-col min-w-0 transition-all duration-300" min-size="40" :size="isMobile ? 100 : editorPaneSize">
                     <span class="sr-only">BBCode 编辑器</span>
@@ -98,7 +98,7 @@ const storePaneSize = ({ prevPane }: { prevPane: PaneInfo }) => {
 }
 
 // 编辑器配置
-const editorOptions:monaco.editor.IStandaloneEditorConstructionOptions = {
+const editorOptions: monaco.editor.IStandaloneEditorConstructionOptions = {
     fontSize: 14,
     minimap: { enabled: true },
     wordWrap: "on",

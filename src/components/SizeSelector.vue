@@ -7,15 +7,7 @@
         <Teleport to="body">
             <Transition name="dropdown">
                 <div v-if="isOpen" class="fixed bg-[#252525] border border-[#404040] rounded-lg shadow-[0_8px_24px_rgba(0,0,0,0.4)] z-9999 min-w-[100px] backdrop-blur-sm overflow-hidden" :style="dropdownStyle">
-                    <button
-                        v-for="size in sizeOptions"
-                        :key="size"
-                        :class="[
-                            'w-full px-4 py-2.5 text-[#cccccc] bg-[#353535] hover:bg-[#3a3a3a] active:bg-[#454545] transition-all duration-150 flex items-center justify-between group relative overflow-hidden',
-                            size === 100 ? 'border-l-2 pl-3.5 border-[#8b5cf6]' : '',
-                        ]"
-                        @click="handleSelect(size)"
-                    >
+                    <button v-for="size in sizeOptions" :key="size" :class="['w-full px-4 py-2.5 text-[#cccccc] bg-[#353535] hover:bg-[#3a3a3a] active:bg-[#454545] transition-all duration-150 flex items-center justify-between group relative overflow-hidden', size === 100 ? 'border-l-2 pl-3.5 border-[#8b5cf6]' : '']" @click="handleSelect(size)">
                         <span class="text-sm font-medium group-hover:text-white transition-all flex items-center gap-2 group-hover:-translate-y-px">
                             {{ size }}
                         </span>

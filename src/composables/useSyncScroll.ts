@@ -16,10 +16,7 @@ export function useSyncScroll() {
      * @param editor Monaco 编辑器实例
      * @param previewContainer 预览容器的 DOM 元素
      */
-    const setupSync = (
-        editor: monaco.editor.IStandaloneCodeEditor | null,
-        previewContainer: HTMLElement | null
-    ) => {
+    const setupSync = (editor: monaco.editor.IStandaloneCodeEditor | null, previewContainer: HTMLElement | null) => {
         if (!editor || !previewContainer) {
             return
         }

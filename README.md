@@ -136,9 +136,6 @@ Enter the mobe front end root
 ```bash
 npm install # Install dependencies
 npm run dev # Start frontend at 5173
-
-cd ./server
-npm run dev # Start backend at 3000 (will remove this soon)
 npm run build # Build for production
 ```
 
@@ -270,9 +267,6 @@ VITE_OSU_PROXY_URL=http://localhost:8000/             # 你的 CORS 代理服务
 ```bash
 npm install # 安装依赖
 npm run dev # 在 5173 启动前端
-
-cd ./server
-npm run dev # 在 3000 启动后端（即将移除）
 npm run build # 构建生产版本
 ```
 

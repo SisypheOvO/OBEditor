@@ -134,6 +134,7 @@
   - [x] content按照事件排序
   - [x] i18n zh-TW 选择后错误导向到 zh
   - [x] 字体在drawer显示时才加载
+  - [x] 修复所有 isMobile，尝试封装 composable
 
 - [ ] 修复编辑器功能问题:
   - [x] 修复编辑器url到上括号的渲染问题

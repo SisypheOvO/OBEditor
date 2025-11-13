@@ -45,6 +45,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onUnmounted, nextTick, watch } from "vue"
+import { useMobileDetection } from "@/composables/useMobileDetection"
 import { useI18n } from "vue-i18n"
 
 const { t } = useI18n()
@@ -64,9 +65,7 @@ const dropdownRef = ref<HTMLElement>()
 const isOpen = ref(false)
 const buttonRect = ref<DOMRect | null>(null)
 
-const isMobile = computed(() => {
-    return window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window
-})
+const { isMobile } = useMobileDetection()
 
 watch(
     () => props.isOpen,

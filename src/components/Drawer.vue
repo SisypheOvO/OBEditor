@@ -100,6 +100,7 @@ import RenameModal from "./Drawer/RenameModal.vue"
 import DeleteModal from "./Drawer/DeleteModal.vue"
 import ThemeSelector from "./Drawer/ThemeSelector.vue"
 import LanguageSelector from "./Drawer/LanguageSelector.vue"
+import { useMobileDetection } from "@/composables/useMobileDetection"
 import { useI18n } from "vue-i18n"
 
 defineProps<{
@@ -120,9 +121,7 @@ const currentOperatingId = ref<string | null>(null)
 const contentMenuOpen = ref<Record<string, boolean>>({})
 const currentTitle = ref("")
 
-const isMobile = computed(() => {
-    return window.matchMedia("(max-width: 768px)").matches || "ontouchstart" in window
-})
+const { isMobile } = useMobileDetection()
 
 const sortedContents = computed(() => {
     return [...contentsStore.contents].sort((a, b) => {

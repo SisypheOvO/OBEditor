@@ -285,5 +285,6 @@ const calculateSelectionRange = (originalSelection: monaco.Selection, insertedTe
 
 .mobile.splitpanes--vertical > .splitpanes__splitter {
     width: 0px;
+    display: none;
 }
 </style>

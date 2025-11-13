@@ -5,16 +5,18 @@
         <EditorToolbar v-if="showToolbar" :tags="bbcodeTags" :show-preview="showPreview" @insert-tag="handleInsertTag" @toggle-preview="togglePreview" @toggle-drawer="isDrawerOpen = !isDrawerOpen" />
 
         <splitpanes class="flex flex-1 overflow-hidden" @resized="storePaneSize">
-            <pane class="editor flex flex-col min-w-0 transition-all duration-300" min-size="40" :size="paneSize">
-                <span class="sr-only">BBCode 编辑器</span>
-                <div class="h-[21px] px-2 flex flex-col justify-center">
-                    <span v-if="isAuthenticated && userData" class="text-[10px] text-[#9c8dcf]">https://osu.ppy.sh/users/{{ userData.id }}</span>
-                </div>
-                <MonacoEditor ref="editorRef" v-model="content" :options="editorOptions" :bbcode-tags="bbcodeTags" @editor-mounted="handleEditorMounted" />
-            </pane>
+            <Transition name="preview-fade">
+                <pane v-if="!isMobile || !showPreview" class="editor flex flex-col min-w-0 transition-all duration-300" min-size="40" :size="isMobile ? 100 : paneSize">
+                    <span class="sr-only">BBCode 编辑器</span>
+                    <div class="h-[21px] px-2 flex flex-col justify-center">
+                        <span v-if="isAuthenticated && userData" class="text-[10px] text-[#9c8dcf]">https://osu.ppy.sh/users/{{ userData.id }}</span>
+                    </div>
+                    <MonacoEditor ref="editorRef" v-model="content" :options="editorOptions" :bbcode-tags="bbcodeTags" @editor-mounted="handleEditorMounted" />
+                </pane>
+            </Transition>
 
             <Transition name="preview-fade">
-                <pane v-if="showPreview" class="preview flex-1 min-w-0 border-l border-[#3c3c3c] overflow-y-hidden bg-[#17181c]" min-size="20" :size="100 - paneSize">
+                <pane v-if="showPreview" class="preview flex-1 min-w-0 border-l border-[#3c3c3c] overflow-y-hidden bg-[#17181c]" min-size="20" :size="isMobile ? 100 : (100 - paneSize)">
                     <BBCodePreview class="mx-auto" :content="content" />
                 </pane>
             </Transition>
@@ -33,6 +35,7 @@ import EditorToolbar from "./components/EditorToolbar.vue"
 import BBCodePreview from "./components/BBCodePreview.vue"
 import EditorStatusBar from "./components/EditorStatusBar.vue"
 import Drawer from "./components/Drawer.vue"
+import { useMobileDetection } from "@/composables/useMobileDetection"
 import * as monaco from "monaco-editor"
 import { getTranslatedBBCodeTags, type BBCodeTag } from "./config/bbcodeTags"
 import { Splitpanes, Pane } from "splitpanes"
@@ -48,6 +51,7 @@ const { isAuthenticated, userData } = storeToRefs(authStore)
 
 const contentsStore = useContentsStore()
 const themeStore = useThemeStore()
+const { isMobile } = useMobileDetection()
 
 // Initialize stores
 onMounted(() => {

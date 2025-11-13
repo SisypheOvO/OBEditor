@@ -243,10 +243,10 @@
     "@emnapi/runtime" "^1.5.0"
     "@tybys/wasm-util" "^0.10.1"
 
-"@osynicite/osynic-osuapi@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.npmmirror.com/@osynicite/osynic-osuapi/-/osynic-osuapi-0.1.8.tgz#fd0340115c15f668af3acce94d22cb88590969d9"
-  integrity sha512-QIsLzvqfibwMAiuuU1jIh+apGCknLU/DRFSRQhoUoqcfVeHIueo7KXH80rkjhthtEVAkDtC6cbaolPqPT8k4VQ==
+"@osynicite/osynic-osuapi@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.npmmirror.com/@osynicite/osynic-osuapi/-/osynic-osuapi-0.1.9.tgz#3414dcb5a255cd0eb2933daf1e769271925fdfcb"
+  integrity sha512-g+RzYZFqH1SGzMsft49TNHLGrfNK0W//sJZYh6EsNkGFrwIS50+dswfXClQlVG2wgyJtPgDYqBKHeX0X56VKKw==
 
 "@rolldown/pluginutils@1.0.0-beta.29":
   version "1.0.0-beta.29"

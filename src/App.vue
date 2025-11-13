@@ -98,19 +98,19 @@ const storePaneSize = ({ prevPane }: { prevPane: PaneInfo }) => {
 }
 
 // 编辑器配置
-const editorOptions = computed<monaco.editor.IStandaloneEditorConstructionOptions>(() => ({
+const editorOptions:monaco.editor.IStandaloneEditorConstructionOptions = {
     fontSize: 14,
-    minimap: { enabled: showPreview.value },
+    minimap: { enabled: true },
     wordWrap: "on",
     lineNumbers: "on",
-    scrollBeyondLastLine: false,
+    scrollBeyondLastLine: true,
     automaticLayout: true,
     tabSize: 2,
     insertSpaces: true,
     formatOnPaste: true,
     formatOnType: true,
     linkedEditing: true,
-}))
+}
 
 const editorPaneSize = computed(() => {
     return showPreview.value ? paneSize.value : 100

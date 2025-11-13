@@ -99,6 +99,7 @@
   - [x] 在Edge移动端，底部被遮挡。。。
   - [x] 在三星默认浏览器，浏览器的底部工具栏会导致Drawer下的主内容可以在Drawer显示时滚动且Drawer不会在工具栏变化高度时重算高度导致白边。。。
   - [x] toolbar左右滚动
+- [ ] 实现能够格式化 BBCode 内容
 - [ ] 尝试阅读osu-web源码，寻找有无更强可用性的解析bbcode、渲染方案（防止未预测的情况下渲染结果与官方不同）
 - [ ] 尝试在profile的基础上兼容forum、beatmap description、team description
 - [ ] 尝试添加多种模式：
@@ -135,8 +136,8 @@
   - [x] i18n zh-TW 选择后错误导向到 zh
   - [x] 字体在drawer显示时才加载
   - [x] 修复所有 isMobile，尝试封装 composable
-  - [ ] 修复 userCard: API Error （神秘）
-  - [ ] 修复改变视窗宽高会导致editor底部被遮挡的问题
+  - [x] 修复 userCard: API Error （神秘）
+  - [x] 修复改变视窗宽高会导致editor底部被遮挡的问题
 
 - [ ] 修复编辑器功能问题:
   - [x] 修复编辑器url到上括号的渲染问题

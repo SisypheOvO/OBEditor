@@ -31,7 +31,7 @@ jobs:
                   node-version: lts/*
 
             - name: Install patch-package
-              run: "npm ci -g patch-package"
+              run: "npm i -g patch-package"
 
             - name: Install step
               run: "npm ci"
